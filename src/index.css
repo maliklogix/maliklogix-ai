@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent: #06B6D4;
+}
+
+.light {
+  --background: #FFFFFF;
+  --foreground: #0F172A;
+  --secondary: #475569;
+  --card-bg: #F8FAFC;
+  --border: #E2E8F0;
+}
+
+.dark {
+  --background: #080C10;
+  --foreground: #F8FAFC;
+  --secondary: #94A3B8;
+  --card-bg: #111827;
+  --border: #1E293B;
+}
+
+@layer base {
+  * {
+    @apply border-[var(--border)];
+  }
+
+  body {
+    @apply font-body bg-[var(--background)] text-[var(--foreground)] transition-colors duration-500 overflow-x-hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display tracking-tight leading-tight;
+  }
+}
+
+/* Custom Cursor */
+.custom-cursor-dot {
+  @apply fixed pointer-events-none z-[9999] rounded-full bg-accent mix-blend-difference;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor-ring {
+  @apply fixed pointer-events-none z-[9998] rounded-full border border-accent/30;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+}
+
+/* Noise Overlay */
+.noise-overlay {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* GSAP Animations Utility */
+.gsap-reveal {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Magnetic Button Base */
+.magnetic-btn {
+  display: inline-block;
+}

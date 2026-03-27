@@ -1,0 +1,48 @@
+IMPORTS:
+import AiCampaignManagementPage from './services/ai-campaign-management';
+import LeadGenerationAiPage from './services/lead-generation-ai';
+import ConversionOptimizationPage from './services/conversion-optimization';
+import AiAdTargetingPage from './services/ai-ad-targeting';
+import FunnelAutomationPage from './services/funnel-automation';
+import EmailMarketingAiPage from './services/email-marketing-ai';
+import SeoStrategyPage from './services/seo-strategy';
+import GeoAiSearchPage from './services/geo-ai-search';
+import AiContentCreationPage from './services/ai-content-creation';
+import BlogWritingPage from './services/blog-writing';
+import KeywordClusteringPage from './services/keyword-clustering';
+import ContentTrackingPage from './services/content-tracking';
+import N8nAutomationPage from './services/n8n-automation';
+import MakeIntegrationsPage from './services/make-integrations';
+import AiChatbotsPage from './services/ai-chatbots';
+import ShopifyAiPage from './services/shopify-ai';
+import CrmAutomationPage from './services/crm-automation';
+import ApiDashboardsPage from './services/api-dashboards';
+import SkillhubPage from './tools/openclaw/skillhub';
+import AutomationPage from './tools/openclaw/automation';
+import AiSkillsPage from './tools/ai-skills';
+import ExtensionsPage from './tools/openclaw/extensions';
+import SubmitPage from './tools/openclaw/submit';
+ROUTES:
+                    <Route path="/services/ai-campaign-management" element={<AiCampaignManagementPage />} />
+                    <Route path="/services/lead-generation-ai" element={<LeadGenerationAiPage />} />
+                    <Route path="/services/conversion-optimization" element={<ConversionOptimizationPage />} />
+                    <Route path="/services/ai-ad-targeting" element={<AiAdTargetingPage />} />
+                    <Route path="/services/funnel-automation" element={<FunnelAutomationPage />} />
+                    <Route path="/services/email-marketing-ai" element={<EmailMarketingAiPage />} />
+                    <Route path="/services/seo-strategy" element={<SeoStrategyPage />} />
+                    <Route path="/services/geo-ai-search" element={<GeoAiSearchPage />} />
+                    <Route path="/services/ai-content-creation" element={<AiContentCreationPage />} />
+                    <Route path="/services/blog-writing" element={<BlogWritingPage />} />
+                    <Route path="/services/keyword-clustering" element={<KeywordClusteringPage />} />
+                    <Route path="/services/content-tracking" element={<ContentTrackingPage />} />
+                    <Route path="/services/n8n-automation" element={<N8nAutomationPage />} />
+                    <Route path="/services/make-integrations" element={<MakeIntegrationsPage />} />
+                    <Route path="/services/ai-chatbots" element={<AiChatbotsPage />} />
+                    <Route path="/services/shopify-ai" element={<ShopifyAiPage />} />
+                    <Route path="/services/crm-automation" element={<CrmAutomationPage />} />
+                    <Route path="/services/api-dashboards" element={<ApiDashboardsPage />} />
+                    <Route path="/tools/openclaw/skillhub" element={<SkillhubPage />} />
+                    <Route path="/tools/openclaw/automation" element={<AutomationPage />} />
+                    <Route path="/tools/ai-skills" element={<AiSkillsPage />} />
+                    <Route path="/tools/openclaw/extensions" element={<ExtensionsPage />} />
+                    <Route path="/tools/openclaw/submit" element={<SubmitPage />} />
