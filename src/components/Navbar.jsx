@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { Menu, X, Cpu, ChevronDown, ChevronUp } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
 import { megaMenuColumns } from '../data/solutionsData';
 
 const Navbar = () => {
@@ -91,13 +92,18 @@ const Navbar = () => {
                         }`}
                 >
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2 group cursor-pointer">
-                        <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center text-white group-hover:rotate-[15deg] transition-transform duration-300">
-                            <Cpu className="w-6 h-6" />
+                    <Link to="/" className="flex items-center gap-3 group cursor-pointer">
+                        <div className="group-hover:rotate-[10deg] transition-all duration-500 ease-out">
+                            <Logo size={42} />
                         </div>
-                        <span className="text-xl font-display font-bold tracking-tighter text-[var(--foreground)]">
-                            Malik<span className="text-accent">Logix</span>
-                        </span>
+                        <div className="flex flex-col -gap-1">
+                            <span className="text-xl font-display font-bold tracking-tighter text-[var(--foreground)] leading-none">
+                                Malik<span className="text-accent underline decoration-accent/20 underline-offset-4 decoration-2">Logix</span>
+                            </span>
+                            <span className="text-[9px] font-mono text-[var(--secondary)] uppercase tracking-[0.3em] font-bold opacity-60">
+                                AI Digital Agency
+                            </span>
+                        </div>
                     </Link>
 
                     {/* Desktop Nav */}

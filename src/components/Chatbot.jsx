@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const MISTRAL_API_KEY = "09FDtUBBcCpIy3rqkt0dsyIUyTuXsInw";
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 
-const SYSTEM_PROMPT = `You are MalikBot, the AI automation advisor for MalikLogix — a premium automation agency specializing in Shopify automation, Amazon seller automation, Excel & data processing, RPA (robotic process automation), and business workflow integrations.
+const SYSTEM_PROMPT = `You are MalikBot, the AI automation advisor for MalikLogix — a premium AI digital automation agency specializing in Shopify automation, Amazon seller automation, Excel & data processing, RPA (robotic process automation), and business workflow integrations.
 
 Your job:
 1. Understand what the visitor currently does manually in their business

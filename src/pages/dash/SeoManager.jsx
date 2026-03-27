@@ -23,7 +23,7 @@ const SeoManager = () => {
     ]);
 
     const [globalMeta, setGlobalMeta] = useState({
-        siteTitle: 'MalikLogix | AI Automation Agency',
+        siteTitle: 'MalikLogix | AI Automation Digital Agency',
         siteDesc: 'We build high-converting AI automation systems for modern businesses.',
         ogImage: 'https://maliklogix.com/og-default.jpg',
         googleAnalyticsId: 'G-XXXXXXXXXX',

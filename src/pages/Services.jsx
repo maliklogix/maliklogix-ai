@@ -146,7 +146,7 @@ export default function Services() {
             <section className="relative pt-28 pb-16 px-6 lg:px-20 overflow-hidden">
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center min-h-[480px]">
                     <div className="srv-hero-text z-10 relative">
-                        <span className="text-accent font-mono text-xs uppercase tracking-[0.4em] font-bold">Full-Service AI Automation Agency</span>
+                        <span className="text-accent font-mono text-xs uppercase tracking-[0.4em] font-bold">Full-Service AI Automation Digital Agency</span>
                         <h1 className="text-5xl md:text-7xl font-display font-bold mt-4 mb-6 leading-[1.05] tracking-tight">
                             Every Channel. <br />
                             <span className="text-accent underline decoration-accent/20 underline-offset-8">One Intelligent</span> System.

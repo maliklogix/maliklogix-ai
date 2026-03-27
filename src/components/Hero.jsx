@@ -171,7 +171,7 @@ const Hero = () => {
                     <div className="max-w-2xl text-left">
                         <div ref={labelRef} className="flex items-center gap-4 mb-6">
                             <div className="h-px w-8 bg-accent" />
-                            <span className="text-sm font-mono text-accent uppercase tracking-widest font-bold">AI Automation Agency</span>
+                            <span className="text-sm font-mono text-accent uppercase tracking-widest font-bold">AI Automation Digital Agency</span>
                         </div>
                         <h1 ref={titleRef} className="text-5xl md:text-6xl lg:text-7xl mb-8 flex flex-col gap-2 font-display font-bold tracking-tight">
                         <span className="line overflow-hidden block pb-2">

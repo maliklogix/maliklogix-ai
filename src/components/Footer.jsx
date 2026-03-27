@@ -2,6 +2,8 @@ import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { Link, useLocation } from 'react-router-dom';
 
+import Logo from './Logo';
+
 const Footer = () => {
     const { theme } = useTheme();
 
@@ -10,12 +12,14 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto">
                 <div className="grid md:grid-cols-4 gap-12 mb-20">
                     <div className="col-span-2">
-                        <div className="flex items-center gap-2 mb-6">
-                            <div className="w-8 h-8 bg-accent rounded-md" />
-                            <span className="text-xl font-display font-bold tracking-tighter text-[var(--foreground)]">MalikLogix</span>
+                        <div className="flex items-center gap-2 mb-6 pointer-events-none">
+                            <Logo size={32} />
+                            <span className="text-xl font-display font-bold tracking-tighter text-[var(--foreground)]">
+                                Malik<span className="text-accent underline decoration-accent/20 underline-offset-4 decoration-2">Logix</span>
+                            </span>
                         </div>
                         <p className="text-[var(--secondary)] max-w-md font-body leading-relaxed">
-                            MalikLogix — AI Automation Agency <br />
+                            MalikLogix — AI Automation Digital Agency <br />
                             Built by Malik | Shopify · Amazon · RPA · Excel Automation
                         </p>
                     </div>
