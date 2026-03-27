@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mysql from 'mysql2/promise';
@@ -11,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -37,7 +38,7 @@ app.post('/api/admin/upload', upload.single('image'), (req, res) => {
     res.json({ url: fileUrl });
 });
 
-const DB_URL = 'mysql://u373901266_maliklogix:Maliklog786555@srv1562.hstgr.io:3306/u373901266_maliklogix';
+const DB_URL = process.env.DB_URL;
 const pool = mysql.createPool({
     uri: DB_URL,
     waitForConnections: true,
@@ -412,4 +413,14 @@ app.get('/api/posts/:slug', async (req, res) => {
 
 app.listen(port, () => {
     console.log(`Backend API running at http://localhost:${port}`);
+});
+
+// ─── Serve React SPA (Production) ────────────────────────────────────────────
+// This must come AFTER all API routes.
+// When deployed, Express serves the built Vite output (dist/) for every
+// non-API request. React Router then handles /dash, /contact, etc. client-side.
+app.use(express.static(path.join(__dirname, 'dist')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
