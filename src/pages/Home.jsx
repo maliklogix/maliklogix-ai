@@ -3,9 +3,9 @@ import React from 'react';
 // Import Sections
 import Hero from '../components/Hero';
 import Stats from '../components/Stats';
-import Problem from '../components/Problem';
 import Solution from '../components/Solution';
 import Features from '../components/Features';
+import LatestPosts from '../components/LatestPosts';
 import CaseStudies from '../components/CaseStudies';
 import Comparison from '../components/Comparison';
 import Philosophy from '../components/Philosophy';
@@ -17,7 +17,7 @@ const Home = () => {
         <>
             <Hero />
             <Stats />
-            <Problem />
+            <LatestPosts />
             <Solution />
             <Features />
             <CaseStudies />

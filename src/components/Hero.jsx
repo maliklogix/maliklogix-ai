@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { useTheme } from '../context/ThemeContext';
 import { Cpu, ShoppingCart, Store, FileSpreadsheet, Workflow } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const AnimationCircle = () => {
     return (
@@ -187,21 +188,23 @@ const Hero = () => {
                     </p>
 
                     <div ref={ctaRef} className="flex flex-wrap gap-6 items-center">
-                        <button
+                        <Link
+                            to="/contact"
                             onMouseMove={handleMagnetic}
                             onMouseLeave={resetMagnetic}
-                            className="magnetic-btn px-8 py-4 bg-accent text-white font-bold rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20"
+                            className="magnetic-btn px-8 py-4 bg-accent text-white font-bold rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20 flex items-center justify-center"
                         >
                             Get Your Free Automation Audit &rarr;
-                        </button>
+                        </Link>
 
-                        <button
+                        <Link
+                            to="/philosophy"
                             onMouseMove={handleMagnetic}
                             onMouseLeave={resetMagnetic}
-                            className="magnetic-btn px-8 py-4 bg-[var(--foreground)]/[0.05] border border-[var(--border)] text-[var(--foreground)] font-bold rounded-lg hover:bg-[var(--foreground)]/[0.1] transition-all shadow-lg whitespace-nowrap"
+                            className="magnetic-btn px-8 py-4 bg-[var(--foreground)]/[0.05] border border-[var(--border)] text-[var(--foreground)] font-bold rounded-lg hover:bg-[var(--foreground)]/[0.1] transition-all shadow-lg whitespace-nowrap flex items-center justify-center"
                         >
                             See Our Work
-                        </button>
+                        </Link>
                     </div>
                 </div>
                     <AnimationCircle />

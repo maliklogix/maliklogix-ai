@@ -24,3 +24,12 @@ dist-ssr
 *.sw?
 
 oldproject/
+
+public/uploads/
+db-inspect.mjs
+.gemini/
+.agents/
+.agent/
+_agents/
+_agent/
+

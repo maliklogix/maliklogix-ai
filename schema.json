@@ -1,0 +1,241 @@
+{
+  "tableName": "posts",
+  "columns": [
+    {
+      "Field": "id",
+      "Type": "varchar(191)",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "title",
+      "Type": "varchar(191)",
+      "Null": "NO",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "subtitle",
+      "Type": "varchar(191)",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "slug",
+      "Type": "varchar(191)",
+      "Null": "NO",
+      "Key": "UNI",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "content_html",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "cover_image_url",
+      "Type": "longtext",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "author_name",
+      "Type": "varchar(191)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "MalikLogix",
+      "Extra": ""
+    },
+    {
+      "Field": "author_avatar",
+      "Type": "longtext",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "author_twitter",
+      "Type": "varchar(191)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "maliklogix",
+      "Extra": ""
+    },
+    {
+      "Field": "category",
+      "Type": "varchar(191)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "AI Marketing",
+      "Extra": ""
+    },
+    {
+      "Field": "tags",
+      "Type": "longtext",
+      "Null": "NO",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "read_time_mins",
+      "Type": "int(11)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "4",
+      "Extra": ""
+    },
+    {
+      "Field": "status",
+      "Type": "enum('draft','published')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "draft",
+      "Extra": ""
+    },
+    {
+      "Field": "featured",
+      "Type": "tinyint(1)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "subscriber_only",
+      "Type": "tinyint(1)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "views",
+      "Type": "bigint(20)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "sponsor_name",
+      "Type": "varchar(191)",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "sponsor_logo",
+      "Type": "longtext",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "sponsor_url",
+      "Type": "varchar(191)",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "sponsor_body",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "seo_title",
+      "Type": "varchar(191)",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "seo_description",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "og_image",
+      "Type": "longtext",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "published_at",
+      "Type": "datetime(3)",
+      "Null": "YES",
+      "Key": "",
+      "Default": null,
+      "Extra": ""
+    },
+    {
+      "Field": "created_at",
+      "Type": "datetime(3)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "current_timestamp(3)",
+      "Extra": ""
+    },
+    {
+      "Field": "updated_at",
+      "Type": "datetime(3)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "current_timestamp(3)",
+      "Extra": ""
+    }
+  ],
+  "sampleRow": {
+    "id": "0264ceeb-3738-4385-85dc-3da5512fdafb",
+    "title": "AI Customer Support: Resolve 70% of Tickets Automatically",
+    "subtitle": "How to implement AI customer support for e-commerce and SaaS — tools, setup, and realistic expectations.",
+    "slug": "ai-for-customer-support-2026",
+    "content_html": "\n## Table of Contents\n\n- [Overview](#overview)\n- [Why This Matters in 2026](#why-this-matters-in-2026)\n- [What You Need to Know](#what-you-need-to-know)\n- [Practical Starting Point](#practical-starting-point)\n- [The maliklogix Perspective](#the-maliklogix-perspective)\n\n---\n\n<figure className=\"diagram-section\">\n\n<svg viewBox=\"0 0 480 106\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"Key statistics\">\n  <rect x=\"10\" y=\"8\" width=\"103\" height=\"88\" rx=\"10\" fill=\"white\" stroke=\"#1a56db\" stroke-width=\"2\"/>\n  <text x=\"61\" y=\"52\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"900\" fill=\"#1a56db\" font-family=\"system-ui\">$2.6T</text>\n  <text x=\"61\" y=\"72\" text-anchor=\"middle\" font-size=\"9\" fill=\"#6b7280\" font-family=\"system-ui\">AI market 2032</text>\n  <rect x=\"129\" y=\"8\" width=\"103\" height=\"88\" rx=\"10\" fill=\"white\" stroke=\"#0ea5e9\" stroke-width=\"2\"/>\n  <text x=\"180\" y=\"52\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"900\" fill=\"#0ea5e9\" font-family=\"system-ui\">900M</text>\n  <text x=\"180\" y=\"72\" text-anchor=\"middle\" font-size=\"9\" fill=\"#6b7280\" font-family=\"system-ui\">ChatGPT users</text>\n  <rect x=\"248\" y=\"8\" width=\"103\" height=\"88\" rx=\"10\" fill=\"white\" stroke=\"#6366f1\" stroke-width=\"2\"/>\n  <text x=\"299\" y=\"52\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"900\" fill=\"#6366f1\" font-family=\"system-ui\">$380B</text>\n  <text x=\"299\" y=\"72\" text-anchor=\"middle\" font-size=\"9\" fill=\"#6b7280\" font-family=\"system-ui\">Anthropic value</text>\n  <rect x=\"367\" y=\"8\" width=\"103\" height=\"88\" rx=\"10\" fill=\"white\" stroke=\"#f59e0b\" stroke-width=\"2\"/>\n  <text x=\"418\" y=\"52\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"900\" fill=\"#f59e0b\" font-family=\"system-ui\">55%</text>\n  <text x=\"418\" y=\"72\" text-anchor=\"middle\" font-size=\"9\" fill=\"#6b7280\" font-family=\"system-ui\">Dev productivity</text>\n</svg>\n\n<figcaption>Data overview — AI Customer Support: Resolve 70% of Tickets Automatically</figcaption>\n</figure>\n\n<Callout type=\"info\" title=\"Key Insight\">\n  AI Customer Support: Resolve 70% of Tickets Automatically is changing fast in 2026. The practitioners winning are the ones combining strong fundamentals with the right AI tools — not just chasing the newest model.\n</Callout>\n\n<div className=\"stat-row\">\n  <Stat value=\"2026\" label=\"Current year\" />\n  <Stat value=\"159\" label=\"Research articles\" />\n  <Stat value=\"55%\" label=\"Avg AI productivity gain\" />\n  <Stat value=\"14%\" label=\"Cross-sector boost\" />\n</div>\n\n## Overview\n\nHow to implement AI customer support for e-commerce and SaaS — tools, setup, and realistic expectations.\n\n---\n\n## Why This Matters in 2026\n\nThe pace of AI advancement means tools, workflows, and best practices change monthly. Staying current on **ai customer support: resolve 70% of tickets automatically** is one of the highest-ROI investments a professional can make.\n\n---\n\n## What You Need to Know\n\nThis area of AI has three distinct user groups with different needs:\n\n**Beginners** — need reliable, simple tools that work without extensive setup. Focus on proven tools with good documentation and active communities.\n\n**Intermediate users** — benefit from customization, integrations, and workflow automation. The ROI increases dramatically with more configuration.\n\n**Advanced users / developers** — can extract significant value from APIs, custom prompts, fine-tuned models, and built-from-scratch automations.\n\n---\n\n---\n\n---\n\n> 💡 **Takeaway:** The goal isn't to use more AI tools. It's to use the *right* AI tools for your specific workflow — deeply enough that they become multipliers on your existing expertise.\n\n---\n\n---\n\n---\n\n## Tools Referenced in This Post\n\n- **[ChatGPT](https://chatgpt.com)** — Referenced in this article\n- **[Shopify](https://www.shopify.com)** — Referenced in this article\n- **[Anthropic](https://www.anthropic.com)** — Referenced in this article\n- **[Descript](https://www.descript.com)** — Referenced in this article\n",
+    "cover_image_url": null,
+    "author_name": "Malik Farooq",
+    "author_avatar": null,
+    "author_twitter": "maliklogix",
+    "category": "AI Business",
+    "tags": "[\"Customer Support\",\"AI Chatbots\",\"Automation\",\"Shopify\"]",
+    "read_time_mins": 3,
+    "status": "published",
+    "featured": 0,
+    "subscriber_only": 0,
+    "views": 0,
+    "sponsor_name": null,
+    "sponsor_logo": null,
+    "sponsor_url": null,
+    "sponsor_body": null,
+    "seo_title": "AI Customer Support: Resolve 70% of Tickets Automatically | MalikLogix",
+    "seo_description": "How to implement AI customer support for e-commerce and SaaS — tools, setup, and realistic expectations.",
+    "og_image": null,
+    "published_at": "2025-09-18T19:00:00.000Z",
+    "created_at": "2025-09-18T19:00:00.000Z",
+    "updated_at": "2026-03-23T23:03:34.412Z"
+  }
+}
