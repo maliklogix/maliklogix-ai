@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
 import Chatbot from './components/Chatbot';
 import ScrollToTop from './components/ScrollToTop';
+import ScriptInjector from './components/ScriptInjector';
 
 // Pages
 import Home from './pages/Home';
@@ -199,6 +200,7 @@ const App = () => {
                     <Footer />
                     <BackToTop />
                     <Chatbot />
+                    <ScriptInjector />
                 </>
             )}
         </div>

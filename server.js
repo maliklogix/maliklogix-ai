@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
 import crypto from 'crypto';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -332,6 +333,35 @@ app.put('/api/admin/tools/:id', async (req, res) => {
             "UPDATE site_tools SET name=?, description=?, category=?, status=?, cta_text=?, cta_url=?, icon_name=? WHERE id=?",
             [name, description, category, status, cta_text, cta_url, icon_name, req.params.id]
         );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
+ * HEADER SCRIPTS ENDPOINTS
+ */
+
+const SCRIPTS_CONFIG_PATH = path.join(__dirname, 'public/scripts-config.json');
+
+app.get('/api/admin/scripts', async (req, res) => {
+    try {
+        const data = await fs.promises.readFile(SCRIPTS_CONFIG_PATH, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (error) {
+        // If file doesn't exist, return default
+        res.json({ scripts: [], deferAll: true, testMode: false, lastUpdated: new Date().toISOString() });
+    }
+});
+
+app.post('/api/admin/scripts', async (req, res) => {
+    try {
+        const config = {
+            ...req.body,
+            lastUpdated: new Date().toISOString()
+        };
+        await fs.promises.writeFile(SCRIPTS_CONFIG_PATH, JSON.stringify(config, null, 2));
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: error.message });
