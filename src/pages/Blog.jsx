@@ -12,9 +12,10 @@ export default function Blog() {
         fetch(`${import.meta.env.VITE_API_URL || ""}/api/posts`)
             .then(res => res.json())
             .then(data => {
-                setPosts(data);
+                setPosts(Array.isArray(data) ? data : []);
                 setLoading(false);
             })
+
             .catch(err => {
                 console.error(err);
                 setLoading(false);
@@ -57,10 +58,16 @@ export default function Blog() {
                                     </div>
                                     <div className="p-8 flex flex-col flex-grow">
                                         <div className="flex items-center gap-4 text-xs text-[var(--secondary)] mb-4 font-mono uppercase tracking-widest">
-                                            <span>{post.published_at ? format(new Date(post.published_at), 'MMM dd, yyyy') : 'Recently'}</span>
+                                            <span>
+                                                {post.published_at && !isNaN(new Date(post.published_at).getTime())
+                                                    ? format(new Date(post.published_at), 'MMM dd, yyyy')
+                                                    : 'Recently Published'
+                                                }
+                                            </span>
                                             <span className="w-1 h-1 rounded-full bg-accent/50" />
-                                            <span className="flex items-center gap-1"><Clock size={14} /> {post.read_time_mins} min</span>
+                                            <span className="flex items-center gap-1"><Clock size={14} /> {post.read_time_mins || 5} min</span>
                                         </div>
+
                                         <h2 className="text-2xl font-display font-bold mb-3 group-hover:text-accent transition-colors line-clamp-2">{post.title}</h2>
                                         <p className="text-[var(--secondary)] line-clamp-3 mb-6 flex-grow">{post.subtitle}</p>
                                         <div className="flex items-center gap-3 mt-auto">
@@ -71,8 +78,9 @@ export default function Blog() {
                                                     {post.author_name ? post.author_name.charAt(0) : 'M'}
                                                 </div>
                                             )}
-                                            <span className="font-medium text-sm">{post.author_name}</span>
+                                            <span className="font-medium text-sm">{post.author_name || 'Malik Logix'}</span>
                                         </div>
+
                                     </div>
                                 </article>
                             </Link>

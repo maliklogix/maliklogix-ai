@@ -19,6 +19,11 @@ import Services from './pages/Services';
 import Philosophy from './pages/Philosophy';
 import Blog from './pages/Blog';
 import BlogDetail from './pages/BlogDetail';
+import Founder from './pages/Founder';
+import About from './pages/About';
+import Legal from './pages/Legal';
+import Docs from './pages/Docs';
+
 
 // Service Pages
 import AiCampaignManagementPage from './pages/services/ai-campaign-management';
@@ -167,9 +172,14 @@ const App = () => {
                         <Route path="/tools/openclaw/extensions" element={<ExtensionsPage />} />
                         <Route path="/tools/openclaw/submit" element={<SubmitPage />} />
                         
-                        <Route path="/philosophy" element={<Philosophy />} />
                         <Route path="/blog" element={<Blog />} />
                         <Route path="/blog/:slug" element={<BlogDetail />} />
+                        <Route path="/founder" element={<Founder />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/legal" element={<Legal />} />
+                        <Route path="/docs" element={<Docs />} />
+                        <Route path="/philosophy" element={<Philosophy />} />
+
 
                         {/* Dashboard Routes */}
                         <Route path="/dash/login" element={<DashLogin />} />

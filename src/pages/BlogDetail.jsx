@@ -107,10 +107,14 @@ export default function BlogDetail() {
 
                 <div className="mb-12">
                     <div className="flex items-center gap-4 text-sm text-[var(--secondary)] mb-6 font-mono uppercase tracking-widest">
-                        <span className="px-3 py-1 bg-accent/10 text-accent font-bold rounded-full">{post.category}</span>
-                        <span className="flex items-center gap-1"><Calendar size={14} /> {format(new Date(post.published_at), 'MMM dd, yyyy')}</span>
+                        <span className="px-3 py-1 bg-accent/10 text-accent font-bold rounded-full">{post.category || 'MalikLogix Insight'}</span>
+                        <span className="flex items-center gap-1">
+                            <Calendar size={14} /> 
+                            {post.published_at ? format(new Date(post.published_at), 'MMM dd, yyyy') : 'Recently Published'}
+                        </span>
                         <span className="w-1 h-1 rounded-full bg-accent/50 hidden md:block" />
-                        <span className="flex items-center gap-1 hidden md:flex"><Clock size={14} /> {post.read_time_mins} min read</span>
+                        <span className="flex items-center gap-1 hidden md:flex"><Clock size={14} /> {post.read_time_mins || 5} min read</span>
+
                     </div>
 
                     <h1 className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-6 leading-[1.1]">
@@ -130,9 +134,10 @@ export default function BlogDetail() {
                             </div>
                         )}
                         <div>
-                            <div className="font-bold">{post.author_name}</div>
+                            <div className="font-bold">{post.author_name || 'Malik Logix'}</div>
                             {post.author_twitter && <a href={`https://twitter.com/${post.author_twitter}`} target="_blank" rel="noreferrer" className="text-sm text-accent hover:underline">@{post.author_twitter}</a>}
                         </div>
+
                     </div>
                 </div>
 

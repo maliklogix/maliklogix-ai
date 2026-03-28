@@ -69,6 +69,8 @@ const Navbar = () => {
         { 
             name: 'Learn', 
             dropdownItems: [
+                { name: 'About Agency', href: '/about' },
+                { name: 'The Founder', href: '/founder' },
                 { name: 'How We Work', href: '/philosophy' },
                 { name: 'Blog', href: '/blog' },
                 { name: 'Docs', href: '/docs' },

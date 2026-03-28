@@ -166,8 +166,8 @@ const Hero = () => {
                 </Canvas>
             </div>
 
-            <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
-                <div className="flex flex-col lg:flex-row items-center gap-12 max-w-5xl">
+            <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-24 relative z-10">
+                <div className="flex flex-col lg:flex-row items-center gap-24 max-w-6xl">
                     <div className="max-w-2xl text-left">
                         <div ref={labelRef} className="flex items-center gap-4 mb-6">
                             <div className="h-px w-8 bg-accent" />

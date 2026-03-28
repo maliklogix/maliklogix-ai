@@ -1,0 +1,32 @@
+/* About Page - Premium Agency Styles */
+
+.about-page {
+    --about-accent: #06B6D4;
+}
+
+.about-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Inherit Global Transitions */
+.about-page {
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Animations for Line Reveal */
+.line {
+    display: block;
+    overflow: hidden;
+}
+
+.line-inner {
+    display: block;
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+    .about-container {
+        padding: 0 1.5rem;
+    }
+}

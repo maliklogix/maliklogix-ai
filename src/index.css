@@ -7,11 +7,12 @@
 }
 
 .light {
-  --background: #FFFFFF;
+  --background: #F8FAFC;
   --foreground: #0F172A;
-  --secondary: #475569;
-  --card-bg: #F8FAFC;
+  --secondary: #64748B;
+  --card-bg: #FFFFFF;
   --border: #E2E8F0;
+  color-scheme: light;
 }
 
 .dark {
@@ -20,11 +21,13 @@
   --secondary: #94A3B8;
   --card-bg: #111827;
   --border: #1E293B;
+  color-scheme: dark;
 }
 
 @layer base {
   * {
     @apply border-[var(--border)];
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
   }
 
   body {

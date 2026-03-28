@@ -1,188 +1,272 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, CheckCircle, ChevronRight, BarChart3, Target, Zap } from 'lucide-react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Points, PointMaterial } from '@react-three/drei';
+import * as THREE from 'three';
+import { gsap } from 'gsap';
+import { 
+  ArrowUpRight, CheckCircle2, ChevronRight, BarChart3, 
+  Target, Zap, Users, UserCheck, UserPlus, Mail, Phone, Calendar
+} from 'lucide-react';
+import { pageContent } from '../../data/solutionsData';
+
+const NeuralNetwork = () => {
+    const pointsRef = useRef();
+    const count = 1300;
+    
+    const positions = useMemo(() => {
+        const pos = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+            pos[i * 3] = (Math.random() - 0.5) * 13;
+            pos[i * 3 + 1] = (Math.random() - 0.5) * 13;
+            pos[i * 3 + 2] = (Math.random() - 0.5) * 13;
+        }
+        return pos;
+    }, []);
+
+    useFrame((state) => {
+        const time = state.clock.getElapsedTime();
+        for (let i = 0; i < count; i++) {
+            const x = positions[i * 3];
+            const y = positions[i * 3 + 1];
+            pointsRef.current.geometry.attributes.position.array[i * 3 + 1] = y + Math.sin(time + x) * 0.03;
+        }
+        pointsRef.current.geometry.attributes.position.needsUpdate = true;
+        pointsRef.current.rotation.y += 0.0007;
+    });
+
+    return (
+        <Points ref={pointsRef} positions={positions} stride={3} frustumCulled={false}>
+            <PointMaterial
+                transparent
+                color="#06B6D4"
+                size={0.038}
+                sizeAttenuation={true}
+                depthWrite={false}
+                blending={THREE.AdditiveBlending}
+            />
+        </Points>
+    );
+};
 
 export default function CrmAutomationPage() {
+    const content = pageContent['crm-automation'];
+    const titleRef = useRef(null);
+
     useEffect(() => {
         window.scrollTo(0, 0);
+        const ctx = gsap.context(() => {
+            gsap.from('.line-inner', {
+                y: 100,
+                rotateX: -45,
+                opacity: 0,
+                duration: 1.2,
+                stagger: 0.1,
+                ease: 'power4.out'
+            });
+        });
+        return () => ctx.revert();
     }, []);
 
     return (
-        <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-28 pb-16">
-            
-            {/* 1. Hero Section */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 max-w-7xl mx-auto text-center">
-                <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6">CRM Automation</h1>
-                <p className="text-[var(--secondary)] text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed mb-10">Automatically qualify, score, and route every lead so your team closes — not chases.</p>
-                <div className="flex flex-wrap justify-center gap-4">
-                    <Link to="/contact" className="px-8 py-4 bg-accent text-white font-bold rounded-full flex items-center gap-2 hover:scale-105 transition-transform shadow-lg shadow-accent/20">
-                        Book a Free Strategy Call <ArrowUpRight size={18} />
-                    </Link>
-                    <a href="#case-studies" className="px-8 py-4 border border-[var(--border)] rounded-full font-bold hover:border-accent/50 transition-colors">
-                        View Case Studies
-                    </a>
-                </div>
-            </section>
+        <div className="min-h-screen bg-background transition-colors duration-500 overflow-hidden relative text-foreground font-body">
+            {/* Neural Background */}
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-25">
+                <Canvas camera={{ position: [0, 0, 7], fov: 60 }}>
+                    <NeuralNetwork />
+                </Canvas>
+            </div>
 
-            {/* 2. What It Is */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 border-y border-[var(--border)] bg-[var(--card-bg)]">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <div className="text-accent font-mono text-xs uppercase tracking-widest font-bold mb-4">What It Is</div>
-                        <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">The System</h2>
-                        <p className="text-[var(--secondary)] text-lg leading-relaxed">We build custom AI lead scoring and CRM automation systems that tell your sales team exactly which prospects to call first. Every lead is automatically enriched, scored based on intent signals, tagged by product interest, and routed to the right person — the moment they enter your pipeline.</p>
-                    </div>
-                    <div className="h-64 md:h-96 rounded-3xl bg-[var(--background)] border border-[var(--border)] flex items-center justify-center p-8 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent" />
-                        <Target className="w-24 h-24 text-accent/50" />
-                        <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-accent/10 blur-3xl rounded-full -translate-x-1/2 -translate-y-1/2" />
-                    </div>
-                </div>
-            </section>
+            <main className="relative z-10 pt-32 pb-24">
+                {/* 1. Hero Section */}
+                <section className="px-8 lg:px-20 py-20 max-w-7xl mx-auto">
+                    <div className="max-w-4xl">
+                        <motion.div 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-center gap-4 mb-6"
+                        >
+                            <div className="h-px w-8 bg-accent" />
+                            <span className="text-xs font-mono text-accent uppercase tracking-[0.3em] font-bold">Revenue · Lead Intelligence</span>
+                        </motion.div>
+                        
+                        <h1 ref={titleRef} className="text-6xl md:text-8xl font-display font-bold tracking-tight mb-8">
+                            <span className="line overflow-hidden block pb-2">
+                                <span className="line-inner block text-foreground leading-tight">{content.title.split(' ')[0]}</span>
+                            </span>
+                            <span className="line overflow-hidden block">
+                                <span className="line-inner block text-accent leading-tight">{content.title.split(' ').slice(1).join(' ')}</span>
+                            </span>
+                        </h1>
+                        
+                        <motion.p 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.6 }}
+                            className="text-xl md:text-2xl text-secondary max-w-2xl leading-relaxed mb-10"
+                        >
+                            {content.subtitle}
+                        </motion.p>
 
-            {/* 3. How It Works */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <div className="text-accent font-mono text-xs uppercase tracking-widest font-bold mb-4">Process</div>
-                    <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight">How It Works</h2>
-                </div>
-                <div className="grid md:grid-cols-3 gap-8">
-                                            <div className="p-8 rounded-3xl border border-[var(--border)] bg-[var(--card-bg)] relative overflow-hidden hover:border-accent/30 transition-colors">
-                            <div className="text-5xl font-display font-bold text-accent/10 absolute -top-4 -right-2">01</div>
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
-                                <span className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm">1</span>
-                                CRM Audit
-                            </h3>
-                            <p className="text-[var(--secondary)] leading-relaxed">We review your current CRM setup and identify where leads are falling through.</p>
-                        </div>
-                        <div className="p-8 rounded-3xl border border-[var(--border)] bg-[var(--card-bg)] relative overflow-hidden hover:border-accent/30 transition-colors">
-                            <div className="text-5xl font-display font-bold text-accent/10 absolute -top-4 -right-2">02</div>
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
-                                <span className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm">2</span>
-                                Scoring Model
-                            </h3>
-                            <p className="text-[var(--secondary)] leading-relaxed">An AI lead scoring model is built using your historical conversion data.</p>
-                        </div>
-                        <div className="p-8 rounded-3xl border border-[var(--border)] bg-[var(--card-bg)] relative overflow-hidden hover:border-accent/30 transition-colors">
-                            <div className="text-5xl font-display font-bold text-accent/10 absolute -top-4 -right-2">03</div>
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
-                                <span className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm">3</span>
-                                Automation Build
-                            </h3>
-                            <p className="text-[var(--secondary)] leading-relaxed">Triggers, sequences, and routing rules are deployed in your CRM.</p>
-                        </div>
-                </div>
-            </section>
-
-            {/* 4. Key Benefits */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 border-y border-[var(--border)] bg-[var(--card-bg)]">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
-                        <div className="text-accent font-mono text-xs uppercase tracking-widest font-bold mb-4">Value</div>
-                        <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight">Key Benefits</h2>
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8 }}
+                            className="flex flex-wrap gap-6"
+                        >
+                            <Link to="/contact" className="px-10 py-5 bg-accent text-white font-bold rounded-2xl flex items-center gap-3 hover:scale-105 transition-all shadow-xl shadow-accent/20 text-lg uppercase tracking-widest font-display">
+                                Optimize Your Pipeline <ArrowUpRight size={20} />
+                            </Link>
+                        </motion.div>
                     </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                                <div className="p-6 rounded-2xl border border-accent/20 bg-accent/5 flex flex-col items-start hover:-translate-y-1 transition-transform">
-                                <CheckCircle className="w-6 h-6 text-accent mb-4" />
-                                <p className="font-medium text-lg leading-snug">Sales team only calls leads most likely to close</p>
+                </section>
+
+                {/* 2. The Relationship Engine */}
+                <section className="px-8 lg:px-20 py-24 border-y border-border/50 bg-card-bg/5 backdrop-blur-xl">
+                    <div className="max-w-7xl mx-auto grid md:grid-cols-[1.2fr_1fr] gap-20 items-center">
+                        <div className="glass-card p-12 md:p-16 border-l-4 border-l-accent relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                <Users size={150} />
                             </div>
-                        <div className="p-6 rounded-2xl border border-accent/20 bg-accent/5 flex flex-col items-start hover:-translate-y-1 transition-transform">
-                                <CheckCircle className="w-6 h-6 text-accent mb-4" />
-                                <p className="font-medium text-lg leading-snug">No lead ever goes cold due to slow follow-up</p>
+                            <h2 className="text-3xl md:text-4xl font-display font-bold mb-8 italic">"Building <span className="text-accent underline decoration-accent/20 underline-offset-8">Trust</span> through Automated Precision."</h2>
+                            <div className="space-y-6 text-secondary text-lg leading-relaxed font-body">
+                                <p>{content.whatItIs}</p>
+                                <p>
+                                    At MalikLogix, we believe your CRM should be your most active employee. We engineer self-healing lead pipelines that score, nurture, and route prospects without a single manual click. We don't just organize data; we orchestrate revenue generation.
+                                </p>
                             </div>
-                        <div className="p-6 rounded-2xl border border-accent/20 bg-accent/5 flex flex-col items-start hover:-translate-y-1 transition-transform">
-                                <CheckCircle className="w-6 h-6 text-accent mb-4" />
-                                <p className="font-medium text-lg leading-snug">Automatic CRM enrichment from LinkedIn, Apollo, and more</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-6">
+                            {[
+                                { icon: <UserCheck />, title: "Lead Scoring", desc: "Intent-based prioritization." },
+                                { icon: <Mail />, title: "Nurture", desc: "Dynamic email sequencing." },
+                                { icon: <Calendar />, title: "Booking", desc: "Autonomous meeting scheduling." },
+                                { icon: <UserPlus />, title: "Enrichment", desc: "Automatic data collection." }
+                            ].map((item, i) => (
+                                <motion.div 
+                                    key={i}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="p-8 glass-card flex flex-col items-center text-center gap-4 group hover:border-accent/30 transition-all duration-500"
+                                >
+                                    <div className="text-accent group-hover:scale-110 transition-transform">{item.icon}</div>
+                                    <h3 className="font-bold text-[10px] tracking-widest uppercase">{item.title}</h3>
+                                    <p className="text-[9px] text-secondary/60 uppercase">{item.desc}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* 3. The Sales Protocol (Process) */}
+                <section className="px-8 lg:px-20 py-32 max-w-7xl mx-auto">
+                    <div className="text-center mb-24">
+                        <h2 className="section-title mb-6 font-display uppercase tracking-widest">The Lead <span className="text-accent underline decoration-accent/10">Lifecycle</span> Architecture</h2>
+                        <p className="text-secondary max-w-xl mx-auto text-lg font-body">A methodical approach to high-velocity sales engineering.</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-12">
+                        {content.howItWorks.map((step, i) => (
+                            <motion.div 
+                                key={i}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.2 }}
+                                className="glass-card p-12 group hover:shadow-2xl shadow-accent/5 transition-all relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 right-0 p-8 text-6xl font-display font-bold text-accent/5 group-hover:text-accent/10 transition-colors">
+                                    0{i+1}
+                                </div>
+                                <h3 className="text-2xl font-bold mb-6 group-hover:text-accent transition-colors">{step.title}</h3>
+                                <p className="text-secondary leading-relaxed font-body opacity-80 group-hover:opacity-100 transition-opacity">{step.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* 4. Velocity Metrics */}
+                <section className="px-8 lg:px-20 py-24 bg-accent text-white relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white to-transparent pointer-events-none" />
+                    <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-16 text-center relative z-10">
+                        {content.results.map((metric, i) => (
+                            <div key={i} className="flex flex-col items-center p-8 border-r last:border-0 border-white/10 group">
+                                <BarChart3 className="w-12 h-12 mb-8 opacity-40 group-hover:opacity-100 transition-opacity" />
+                                <p className="text-2xl md:text-3xl font-display font-bold leading-tight tracking-tight uppercase">{metric}</p>
                             </div>
-                        <div className="p-6 rounded-2xl border border-accent/20 bg-accent/5 flex flex-col items-start hover:-translate-y-1 transition-transform">
-                                <CheckCircle className="w-6 h-6 text-accent mb-4" />
-                                <p className="font-medium text-lg leading-snug">Works with HubSpot, Salesforce, Pipedrive, or any CRM</p>
+                        ))}
+                    </div>
+                </section>
+
+                {/* 5. Pipeline Capabilities & Success Matrices */}
+                <section className="px-8 lg:px-20 py-32 border-b border-border/50">
+                    <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-24">
+                        <div className="space-y-16">
+                            <div>
+                                <h2 className="section-title !text-4xl text-left italic mb-8">System <span className="text-accent underline decoration-accent/20">Capabilities</span></h2>
+                                <p className="text-secondary text-lg mb-12 font-body max-w-xl">
+                                    Our CRM architectures integrate deeply with HubSpot, Salesforce, and Pipedrive to eliminate data silos and accelerate the sales cycle.
+                                </p>
                             </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* 5. Who It's For */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <div className="text-accent font-mono text-xs uppercase tracking-widest font-bold mb-4">Fit</div>
-                    <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight">Who It’s For</h2>
-                </div>
-                <div className="grid md:grid-cols-2 gap-8 lg:gap-16">
-                    <div className="p-8 md:p-12 rounded-3xl bg-[var(--card-bg)] border border-[var(--border)]">
-                        <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
-                            <Target className="text-accent" /> Ideal For
-                        </h3>
-                        <ul className="space-y-4">
-                                                        <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <ChevronRight className="text-accent shrink-0 mt-1 w-5 h-5" />
-                                    <span>B2B companies with a dedicated sales team</span>
-                                </li>
-                            <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <ChevronRight className="text-accent shrink-0 mt-1 w-5 h-5" />
-                                    <span>Agencies managing lead flow for multiple service lines</span>
-                                </li>
-                            <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <ChevronRight className="text-accent shrink-0 mt-1 w-5 h-5" />
-                                    <span>SaaS companies with long sales cycles</span>
-                                </li>
-                        </ul>
-                    </div>
-                    <div className="p-8 md:p-12 rounded-3xl bg-[var(--card-bg)] border border-[var(--border)]">
-                        <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
-                            <Zap className="text-accent" /> Problems Solved
-                        </h3>
-                        <ul className="space-y-4">
-                                                        <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-accent/50 shrink-0 mt-2.5" />
-                                    <span>Messy, unorganized CRM pipelines</span>
-                                </li>
-                            <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-accent/50 shrink-0 mt-2.5" />
-                                    <span>Sales reps cherry-picking leads</span>
-                                </li>
-                            <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-accent/50 shrink-0 mt-2.5" />
-                                    <span>Lack of visibility into lead quality</span>
-                                </li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            {/* 6. Results / Metrics */}
-            <section className="px-6 lg:px-20 py-20 bg-[#002e3b]">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-center text-white">
-                                            <div className="flex flex-col items-center p-6">
-                            <BarChart3 className="w-12 h-12 text-[#00B4C8] mb-6" />
-                            <p className="text-xl md:text-2xl font-display font-bold leading-tight max-w-xs">Lead scoring system tells team exactly which prospects to call</p>
+                            <div className="grid sm:grid-cols-2 gap-8">
+                                {content.keyBenefits.map((benefit, i) => (
+                                    <div key={i} className="flex gap-4 items-start group p-6 glass-card hover:bg-accent/5 transition-colors border-l-2 border-l-transparent hover:border-l-accent">
+                                        <CheckCircle2 className="text-accent shrink-0 mt-1" size={18} />
+                                        <p className="font-bold text-foreground text-[10px] uppercase tracking-[0.2em] leading-relaxed">{benefit}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <div className="flex flex-col items-center p-6">
-                            <BarChart3 className="w-12 h-12 text-[#00B4C8] mb-6" />
-                            <p className="text-xl md:text-2xl font-display font-bold leading-tight max-w-xs">Pipeline velocity increased 50% in first 60 days</p>
-                        </div>
-                        <div className="flex flex-col items-center p-6">
-                            <BarChart3 className="w-12 h-12 text-[#00B4C8] mb-6" />
-                            <p className="text-xl md:text-2xl font-display font-bold leading-tight max-w-xs">Zero leads dropped in transition between stages</p>
-                        </div>
-                </div>
-            </section>
 
-            {/* 7. CTA Section */}
-            <section className="px-6 lg:px-20 py-24 max-w-7xl mx-auto text-center">
-                <div className="bg-accent rounded-3xl p-12 md:p-20 relative overflow-hidden text-white shadow-2xl">
-                    <div className="absolute inset-0 bg-black/10" />
-                    <div className="relative z-10">
-                        <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to get started?</h2>
-                        <p className="text-lg mb-10 text-white/90 max-w-xl mx-auto">
-                            Let's map out exactly how CRM Automation can drive growth for your business.
+                        <div className="glass-card !p-12 space-y-12 bg-card-bg/20">
+                            <div className="flex flex-col gap-10">
+                                <h3 className="text-xs font-bold uppercase tracking-[0.5em] text-accent flex items-center gap-4">
+                                    <Target size={20} /> Expansion Matrix
+                                </h3>
+                                <div className="flex flex-wrap gap-4">
+                                    {content.whoItsFor.left.map((item, i) => (
+                                        <span key={i} className="px-6 py-3 bg-accent/5 border border-accent/20 rounded-2xl text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-secondary/80 flex items-center gap-3">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                                            {item}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div className="flex flex-col gap-10">
+                                <h3 className="text-xs font-bold uppercase tracking-[0.5em] text-accent flex items-center gap-4">
+                                    <Zap size={20} /> Pipeline Frictions
+                                </h3>
+                                <ul className="space-y-6">
+                                    {content.whoItsFor.right.map((item, i) => (
+                                        <li key={i} className="flex items-center gap-5 text-secondary text-[13px] font-body bg-accent/5 p-5 rounded-2xl border border-border/40 hover:border-accent/40 transition-colors group">
+                                            <Phone size={14} className="text-accent/40 group-hover:text-accent transition-colors" />
+                                            <span>{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 6. Strategic Pipeline CTA */}
+                <section className="px-8 lg:px-20 py-24 text-center">
+                    <div className="glass-card max-w-4xl mx-auto p-16 md:p-24 border-t-8 border-t-accent shadow-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-accent/5 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        <h2 className="text-5xl md:text-7xl font-display font-bold mb-10 tracking-tighter">Accelerate Your <span className="text-accent italic text-6xl md:text-8xl">Revenue</span></h2>
+                        <p className="text-xl text-secondary mb-12 max-w-xl mx-auto leading-relaxed font-body">
+                            Ready to stop manual data entry and start closing more deals? Let's deploy your automated revenue machine today.
                         </p>
-                        <Link to="/contact" className="inline-flex px-10 py-5 bg-white text-accent font-bold rounded-full text-lg items-center gap-2 hover:scale-105 transition-transform shadow-xl">
-                            Book a Free AI Strategy Call <ArrowUpRight size={20} />
+                        <Link to="/contact" className="px-12 py-6 bg-accent text-white font-bold rounded-2xl text-xl hover:scale-105 transition-transform inline-flex items-center gap-4 shadow-2xl shadow-accent/20 font-display uppercase tracking-widest">
+                            Audit Your Pipeline <ArrowUpRight size={24} />
                         </Link>
                     </div>
-                </div>
-            </section>
+                </section>
+            </main>
         </div>
     );
 }

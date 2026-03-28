@@ -1,188 +1,241 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, CheckCircle, ChevronRight, BarChart3, Target, Zap } from 'lucide-react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Points, PointMaterial } from '@react-three/drei';
+import * as THREE from 'three';
+import { gsap } from 'gsap';
+import { 
+  ArrowUpRight, CheckCircle2, ChevronRight, BarChart3, 
+  Target, Zap, BookOpen, PenTool, Layout, FileText, Globe
+} from 'lucide-react';
+import { pageContent } from '../../data/solutionsData';
+
+const NeuralNetwork = () => {
+    const pointsRef = useRef();
+    const count = 1000;
+    
+    const positions = useMemo(() => {
+        const pos = new Float32Array(count * 3);
+        for (let j = 0; j < count; j++) {
+            pos[j * 3] = (Math.random() - 0.5) * 10;
+            pos[j * 3 + 1] = (Math.random() - 0.5) * 10;
+            pos[j * 3 + 2] = (Math.random() - 0.5) * 10;
+        }
+        return pos;
+    }, []);
+
+    useFrame((state) => {
+        const time = state.clock.getElapsedTime();
+        for (let j = 0; j < count; j++) {
+            const x = positions[j * 3];
+            const y = positions[j * 3 + 1];
+            pointsRef.current.geometry.attributes.position.array[j * 3 + 1] = y + Math.sin(time + x) * 0.02;
+        }
+        pointsRef.current.geometry.attributes.position.needsUpdate = true;
+        pointsRef.current.rotation.y += 0.001;
+    });
+
+    return (
+        <Points ref={pointsRef} positions={positions} stride={3} frustumCulled={false}>
+            <PointMaterial
+                transparent
+                color="#06B6D4"
+                size={0.03}
+                sizeAttenuation={true}
+                depthWrite={false}
+                blending={THREE.AdditiveBlending}
+            />
+        </Points>
+    );
+};
 
 export default function BlogWritingPage() {
+    const content = pageContent['blog-writing'];
+    const titleRef = useRef(null);
+
     useEffect(() => {
         window.scrollTo(0, 0);
+        const ctx = gsap.context(() => {
+            gsap.from('.line-inner', {
+                y: 100,
+                rotateX: -45,
+                opacity: 0,
+                duration: 1.2,
+                stagger: 0.1,
+                ease: 'power4.out'
+            });
+        });
+        return () => ctx.revert();
     }, []);
 
     return (
-        <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-28 pb-16">
-            
-            {/* 1. Hero Section */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 max-w-7xl mx-auto text-center">
-                <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6">Blog & Article Writing</h1>
-                <p className="text-[var(--secondary)] text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed mb-10">Authority content that builds trust, drives organic traffic, and converts readers.</p>
-                <div className="flex flex-wrap justify-center gap-4">
-                    <Link to="/contact" className="px-8 py-4 bg-accent text-white font-bold rounded-full flex items-center gap-2 hover:scale-105 transition-transform shadow-lg shadow-accent/20">
-                        Book a Free Strategy Call <ArrowUpRight size={18} />
-                    </Link>
-                    <a href="#case-studies" className="px-8 py-4 border border-[var(--border)] rounded-full font-bold hover:border-accent/50 transition-colors">
-                        View Case Studies
-                    </a>
-                </div>
-            </section>
+        <div className="min-h-screen bg-background transition-colors duration-500 overflow-hidden relative">
+            {/* Neural Background */}
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
+                <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
+                    <NeuralNetwork />
+                </Canvas>
+            </div>
 
-            {/* 2. What It Is */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 border-y border-[var(--border)] bg-[var(--card-bg)]">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <div className="text-accent font-mono text-xs uppercase tracking-widest font-bold mb-4">What It Is</div>
-                        <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">The System</h2>
-                        <p className="text-[var(--secondary)] text-lg leading-relaxed">We produce long-form blog posts and articles that rank in search, establish your expertise, and move readers toward a buying decision. Every piece is researched, SEO-optimized, and written to reflect your brand’s authority — not generic AI fluff.</p>
-                    </div>
-                    <div className="h-64 md:h-96 rounded-3xl bg-[var(--background)] border border-[var(--border)] flex items-center justify-center p-8 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent" />
-                        <Target className="w-24 h-24 text-accent/50" />
-                        <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-accent/10 blur-3xl rounded-full -translate-x-1/2 -translate-y-1/2" />
-                    </div>
-                </div>
-            </section>
+            <main className="relative z-10 pt-32 pb-24">
+                {/* 1. Hero Section */}
+                <section className="px-8 lg:px-20 py-20 max-w-7xl mx-auto">
+                    <div className="max-w-4xl">
+                        <motion.div 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-center gap-4 mb-6"
+                        >
+                            <div className="h-px w-8 bg-accent" />
+                            <span className="text-xs font-mono text-accent uppercase tracking-[0.3em] font-bold">Solutions · Authority Assets</span>
+                        </motion.div>
+                        
+                        <h1 ref={titleRef} className="text-6xl md:text-8xl font-display font-bold tracking-tight mb-8">
+                            <span className="line overflow-hidden block pb-2">
+                                <span className="line-inner block text-foreground leading-tight">{content.title.split(' ')[0]}</span>
+                            </span>
+                            <span className="line overflow-hidden block">
+                                <span className="line-inner block text-accent leading-tight">{content.title.split(' ').slice(1).join(' ')}</span>
+                            </span>
+                        </h1>
+                        
+                        <motion.p 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.6 }}
+                            className="text-xl md:text-2xl text-secondary max-w-2xl leading-relaxed mb-10 font-body"
+                        >
+                            {content.subtitle}
+                        </motion.p>
 
-            {/* 3. How It Works */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <div className="text-accent font-mono text-xs uppercase tracking-widest font-bold mb-4">Process</div>
-                    <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight">How It Works</h2>
-                </div>
-                <div className="grid md:grid-cols-3 gap-8">
-                                            <div className="p-8 rounded-3xl border border-[var(--border)] bg-[var(--card-bg)] relative overflow-hidden hover:border-accent/30 transition-colors">
-                            <div className="text-5xl font-display font-bold text-accent/10 absolute -top-4 -right-2">01</div>
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
-                                <span className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm">1</span>
-                                Topic Research
-                            </h3>
-                            <p className="text-[var(--secondary)] leading-relaxed">We identify high-intent topics with real search volume and low competition.</p>
-                        </div>
-                        <div className="p-8 rounded-3xl border border-[var(--border)] bg-[var(--card-bg)] relative overflow-hidden hover:border-accent/30 transition-colors">
-                            <div className="text-5xl font-display font-bold text-accent/10 absolute -top-4 -right-2">02</div>
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
-                                <span className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm">2</span>
-                                Writing & Optimization
-                            </h3>
-                            <p className="text-[var(--secondary)] leading-relaxed">Every article is written with target keywords, proper structure, and internal linking.</p>
-                        </div>
-                        <div className="p-8 rounded-3xl border border-[var(--border)] bg-[var(--card-bg)] relative overflow-hidden hover:border-accent/30 transition-colors">
-                            <div className="text-5xl font-display font-bold text-accent/10 absolute -top-4 -right-2">03</div>
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
-                                <span className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm">3</span>
-                                Publish & Track
-                            </h3>
-                            <p className="text-[var(--secondary)] leading-relaxed">We handle publishing and track rankings and traffic for every piece.</p>
-                        </div>
-                </div>
-            </section>
-
-            {/* 4. Key Benefits */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 border-y border-[var(--border)] bg-[var(--card-bg)]">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
-                        <div className="text-accent font-mono text-xs uppercase tracking-widest font-bold mb-4">Value</div>
-                        <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight">Key Benefits</h2>
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8 }}
+                            className="flex flex-wrap gap-6"
+                        >
+                            <Link to="/contact" className="px-10 py-5 bg-accent text-white font-bold rounded-2xl flex items-center gap-3 hover:scale-105 transition-all shadow-xl shadow-accent/20 text-lg">
+                                Start Your Publication <ArrowUpRight size={20} />
+                            </Link>
+                        </motion.div>
                     </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                                <div className="p-6 rounded-2xl border border-accent/20 bg-accent/5 flex flex-col items-start hover:-translate-y-1 transition-transform">
-                                <CheckCircle className="w-6 h-6 text-accent mb-4" />
-                                <p className="font-medium text-lg leading-snug">Articles that rank on Google and drive consistent traffic</p>
+                </section>
+
+                {/* 2. The System */}
+                <section className="px-8 lg:px-20 py-24 border-y border-border/50">
+                    <div className="max-w-7xl mx-auto grid md:grid-cols-[1fr_400px] gap-16 items-center">
+                        <div className="glass-card p-12 md:p-16 border-l-4 border-l-accent">
+                            <h2 className="text-3xl md:text-4xl font-display font-bold mb-8 italic">"Content that <span className="text-accent underline decoration-accent/20 underline-offset-8">earns</span> attention."</h2>
+                            <p className="text-secondary text-lg leading-relaxed font-body">
+                                {content.whatItIs}
+                            </p>
+                        </div>
+                        <div className="relative aspect-square flex items-center justify-center">
+                            <div className="absolute inset-0 bg-accent/5 blur-[80px] rounded-full animate-pulse" />
+                            <BookOpen size={180} className="w-48 h-48 text-accent/20 relative z-10" />
+                            <motion.div 
+                                animate={{ rotate: [0, 10, 0] }}
+                                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                                className="absolute inset-0 border-[2px] border-accent/20 rounded-full"
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* 3. Process */}
+                <section className="px-8 lg:px-20 py-24 max-w-7xl mx-auto">
+                    <h2 className="section-title mb-16">The Editorial <span className="text-accent">Protocol</span></h2>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {content.howItWorks.map((step, i) => (
+                            <motion.div 
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="glass-card p-10 hover:border-accent/30 transition-all group"
+                            >
+                                <div className="text-5xl font-display font-bold text-accent/10 mb-6 group-hover:text-accent/20 transition-colors">0{i+1}</div>
+                                <h3 className="text-xl font-bold mb-4">{step.title}</h3>
+                                <p className="text-secondary leading-relaxed text-sm font-body">{step.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* 4. Results Section */}
+                <section className="px-8 lg:px-20 py-20 bg-accent text-white">
+                    <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-12 text-center">
+                        {content.results.map((metric, i) => (
+                            <div key={i} className="flex flex-col items-center p-6 border-r last:border-0 border-white/10">
+                                <PenTool className="w-10 h-10 mb-6 opacity-60" />
+                                <p className="text-2xl font-display font-bold leading-tight">{metric}</p>
                             </div>
-                        <div className="p-6 rounded-2xl border border-accent/20 bg-accent/5 flex flex-col items-start hover:-translate-y-1 transition-transform">
-                                <CheckCircle className="w-6 h-6 text-accent mb-4" />
-                                <p className="font-medium text-lg leading-snug">Builds domain authority over time</p>
-                            </div>
-                        <div className="p-6 rounded-2xl border border-accent/20 bg-accent/5 flex flex-col items-start hover:-translate-y-1 transition-transform">
-                                <CheckCircle className="w-6 h-6 text-accent mb-4" />
-                                <p className="font-medium text-lg leading-snug">Converts readers into leads with strategic CTAs</p>
-                            </div>
-                        <div className="p-6 rounded-2xl border border-accent/20 bg-accent/5 flex flex-col items-start hover:-translate-y-1 transition-transform">
-                                <CheckCircle className="w-6 h-6 text-accent mb-4" />
-                                <p className="font-medium text-lg leading-snug">Full editorial calendar managed for you</p>
-                            </div>
+                        ))}
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {/* 5. Who It's For */}
-            <section className="px-6 lg:px-20 py-16 md:py-24 max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <div className="text-accent font-mono text-xs uppercase tracking-widest font-bold mb-4">Fit</div>
-                    <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight">Who It’s For</h2>
-                </div>
-                <div className="grid md:grid-cols-2 gap-8 lg:gap-16">
-                    <div className="p-8 md:p-12 rounded-3xl bg-[var(--card-bg)] border border-[var(--border)]">
-                        <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
-                            <Target className="text-accent" /> Ideal For
-                        </h3>
-                        <ul className="space-y-4">
-                                                        <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <ChevronRight className="text-accent shrink-0 mt-1 w-5 h-5" />
-                                    <span>Businesses investing in long-term organic growth</span>
-                                </li>
-                            <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <ChevronRight className="text-accent shrink-0 mt-1 w-5 h-5" />
-                                    <span>SaaS companies building thought leadership</span>
-                                </li>
-                            <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <ChevronRight className="text-accent shrink-0 mt-1 w-5 h-5" />
-                                    <span>Service businesses needing to educate before selling</span>
-                                </li>
-                        </ul>
+                {/* 5. Key Benefits & Who It's For */}
+                <section className="px-8 lg:px-20 py-32 border-b border-border/50">
+                    <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20">
+                        <div className="space-y-12">
+                            <h2 className="section-title !text-4xl text-left italic">Authority <span className="text-accent underline decoration-accent/20">Scaling</span></h2>
+                            <div className="grid sm:grid-cols-2 gap-6">
+                                {content.keyBenefits.map((benefit, i) => (
+                                    <div key={i} className="flex gap-4 items-start">
+                                        <CheckCircle2 className="text-accent shrink-0 mt-1" size={20} />
+                                        <p className="font-bold text-foreground text-sm uppercase tracking-wider">{benefit}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="glass-card !p-12 space-y-12">
+                            <div className="flex flex-col gap-6">
+                                <h3 className="text-xl font-bold uppercase tracking-widest text-accent flex items-center gap-3">
+                                    <Target size={20} /> Target Profile
+                                </h3>
+                                <div className="flex flex-wrap gap-3">
+                                    {content.whoItsFor.left.map((item, i) => (
+                                        <span key={i} className="px-4 py-2 bg-accent/5 border border-accent/20 rounded-full text-xs font-mono font-bold tracking-widest text-secondary">
+                                            {item}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div className="flex flex-col gap-6">
+                                <h3 className="text-xl font-bold uppercase tracking-widest text-accent flex items-center gap-3">
+                                    <Zap size={20} /> Inefficiency Gap
+                                </h3>
+                                <ul className="space-y-4">
+                                    {content.whoItsFor.right.map((item, i) => (
+                                        <li key={i} className="flex items-center gap-3 text-secondary text-sm">
+                                            <div className="w-1.5 h-1.5 bg-accent rounded-full" />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div className="p-8 md:p-12 rounded-3xl bg-[var(--card-bg)] border border-[var(--border)]">
-                        <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
-                            <Zap className="text-accent" /> Problems Solved
-                        </h3>
-                        <ul className="space-y-4">
-                                                        <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-accent/50 shrink-0 mt-2.5" />
-                                    <span>Empty or outdated company blog</span>
-                                </li>
-                            <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-accent/50 shrink-0 mt-2.5" />
-                                    <span>Traffic that doesn’t match buyer intent</span>
-                                </li>
-                            <li className="flex gap-3 text-[var(--secondary)] text-lg">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-accent/50 shrink-0 mt-2.5" />
-                                    <span>Lack of in-house subject matter expertise</span>
-                                </li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            {/* 6. Results / Metrics */}
-            <section className="px-6 lg:px-20 py-20 bg-[#002e3b]">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-center text-white">
-                                            <div className="flex flex-col items-center p-6">
-                            <BarChart3 className="w-12 h-12 text-[#00B4C8] mb-6" />
-                            <p className="text-xl md:text-2xl font-display font-bold leading-tight max-w-xs">12 blog posts in first month, 8 on page 1 within 90 days</p>
-                        </div>
-                        <div className="flex flex-col items-center p-6">
-                            <BarChart3 className="w-12 h-12 text-[#00B4C8] mb-6" />
-                            <p className="text-xl md:text-2xl font-display font-bold leading-tight max-w-xs">40% of inbound leads now come from organic blog traffic</p>
-                        </div>
-                        <div className="flex flex-col items-center p-6">
-                            <BarChart3 className="w-12 h-12 text-[#00B4C8] mb-6" />
-                            <p className="text-xl md:text-2xl font-display font-bold leading-tight max-w-xs">Newsletter audience grew 3x from blog-driven traffic</p>
-                        </div>
-                </div>
-            </section>
-
-            {/* 7. CTA Section */}
-            <section className="px-6 lg:px-20 py-24 max-w-7xl mx-auto text-center">
-                <div className="bg-accent rounded-3xl p-12 md:p-20 relative overflow-hidden text-white shadow-2xl">
-                    <div className="absolute inset-0 bg-black/10" />
-                    <div className="relative z-10">
-                        <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to get started?</h2>
-                        <p className="text-lg mb-10 text-white/90 max-w-xl mx-auto">
-                            Let's map out exactly how Blog & Article Writing can drive growth for your business.
+                {/* CTA */}
+                <section className="px-8 lg:px-20 py-24 text-center">
+                    <div className="glass-card max-w-4xl mx-auto p-16 md:p-24 border-t-8 border-t-accent shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 blur-[120px] rounded-full -mr-32 -mt-32" />
+                        <h2 className="text-4xl md:text-5xl font-display font-bold mb-8">Deploy Authority <span className="text-accent">Now</span></h2>
+                        <p className="text-xl text-secondary mb-12 max-w-xl mx-auto leading-relaxed">
+                            Let's map out exactly how {content.title} can drive a systemized revenue architecture for your business.
                         </p>
-                        <Link to="/contact" className="inline-flex px-10 py-5 bg-white text-accent font-bold rounded-full text-lg items-center gap-2 hover:scale-105 transition-transform shadow-xl">
-                            Book a Free AI Strategy Call <ArrowUpRight size={20} />
+                        <Link to="/contact" className="px-12 py-6 bg-accent text-white font-bold rounded-2xl text-xl hover:scale-110 transition-transform inline-flex items-center gap-4 shadow-2xl shadow-accent/20">
+                            Book Your Audit <ArrowUpRight size={24} />
                         </Link>
                     </div>
-                </div>
-            </section>
+                </section>
+            </main>
         </div>
     );
 }

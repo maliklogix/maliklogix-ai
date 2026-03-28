@@ -4,17 +4,20 @@ export default {
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
+    darkMode: 'class',
     theme: {
         extend: {
             colors: {
-                background: "#080C10",
-                foreground: "#F8FAFC",
+                background: "var(--background)",
+                foreground: "var(--foreground)",
                 accent: {
                     DEFAULT: "#06B6D4",
                     light: "#22D3EE",
                     dark: "#0891B2",
                 },
-                secondary: "#475569",
+                secondary: "var(--secondary)",
+                'card-bg': "var(--card-bg)",
+                border: "var(--border)",
             },
             fontFamily: {
                 display: ["Space Grotesk", "sans-serif"],
