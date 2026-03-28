@@ -10,6 +10,7 @@ import {
     Brain, 
     Image as ImageIcon, 
     MessageSquare,
+    Share2,
     Settings, 
     LogOut,
     Cpu,
@@ -26,6 +27,7 @@ const navItems = [
     { name: 'Newsletter', icon: Mail, href: '/dash/newsletter' },
     { name: 'Leads', icon: Inbox, href: '/dash/leads' },
     { name: 'SEO Manager', icon: Search, href: '/dash/seo' },
+    { name: 'Social Media', icon: Share2, href: '/dash/social-media' },
     { name: 'OpenClaw Tools', icon: Brain, href: '/dash/tools' },
     { name: 'Media Library', icon: ImageIcon, href: '/dash/media' },
 ];

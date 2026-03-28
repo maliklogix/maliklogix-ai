@@ -73,6 +73,7 @@ import MediaManager from './pages/dash/Media/MediaManager';
 import LiveAgent from './pages/dash/LiveAgent/LiveAgent';
 import ToolsManager from './pages/dash/Tools/ToolsManager';
 import ToolEditor from './pages/dash/Tools/ToolEditor';
+import SocialMedia from './pages/dash/SocialMedia/SocialMedia';
 import { ToastProvider } from './components/dash/Toast';
 
 // Register GSAP plugins
@@ -208,6 +209,7 @@ const App = () => {
                                 <Route path="/dash/live-agent" element={<LiveAgent />} />
                                 <Route path="/dash/seo" element={<SeoManager />} />
                                 <Route path="/dash/settings" element={<SettingsManager />} />
+                                <Route path="/dash/social-media" element={<SocialMedia />} />
                                 <Route path="/dash/tools" element={<ToolsManager />} />
                                 <Route path="/dash/tools/:id/edit" element={<ToolEditor />} />
                             </Route>
