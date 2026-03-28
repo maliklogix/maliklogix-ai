@@ -49,7 +49,7 @@ const Footer = () => {
                         AI Stack Operational
                     </div>
                     <div>
-                        © 2025 MalikLogix. All rights reserved.
+                        © 2026 MalikLogix. All rights reserved.
                     </div>
                     <div className="flex gap-8">
                         <a href="https://github.com/maliklogix" target="_blank" rel="noreferrer" className="hover:text-accent transition-colors">GitHub</a>
