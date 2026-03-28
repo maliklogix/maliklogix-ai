@@ -13,7 +13,8 @@ import {
     Trash2,
     Loader2,
     Star,
-    ExternalLink
+    ExternalLink,
+    ArrowUpRight
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -44,7 +45,7 @@ const LeadDetail = () => {
             const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/leads/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...lead, status: newStatus })
+                body: JSON.stringify({ status: newStatus })
             });
             if (res.ok) {
                 setLead(prev => ({ ...prev, status: newStatus }));
@@ -53,6 +54,20 @@ const LeadDetail = () => {
             console.error(err);
         } finally {
             setUpdating(false);
+        }
+    };
+
+    const handleDeleteLead = async () => {
+        if (!window.confirm('Are you sure you want to delete this lead permanently?')) return;
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/leads/${id}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                navigate('/dash/leads');
+            }
+        } catch (err) {
+            console.error(err);
         }
     };
 
@@ -85,6 +100,7 @@ const LeadDetail = () => {
                         <CheckSquare size={16} /> Mark Qualified
                     </button>
                     <button 
+                        onClick={handleDeleteLead}
                         className="p-2.5 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all border border-red-100"
                         title="Delete Lead"
                     >

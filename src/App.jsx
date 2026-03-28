@@ -69,6 +69,8 @@ import NewsletterList from './pages/dash/Newsletter/NewsletterList';
 import CampaignComposer from './pages/dash/Newsletter/CampaignComposer';
 import SeoManager from './pages/dash/SeoManager';
 import SettingsManager from './pages/dash/SettingsManager';
+import MediaManager from './pages/dash/Media/MediaManager';
+import LiveAgent from './pages/dash/LiveAgent/LiveAgent';
 import ToolsManager from './pages/dash/Tools/ToolsManager';
 import ToolEditor from './pages/dash/Tools/ToolEditor';
 import { ToastProvider } from './components/dash/Toast';
@@ -87,6 +89,9 @@ const App = () => {
     const isDashboard = location.pathname.startsWith('/dash');
 
     useEffect(() => {
+        // Disable Lenis for Dashboard as it conflicts with the dashboard's internal scroll
+        if (isDashboard) return;
+
         // Initialize Lenis Smooth Scroll
         const lenis = new Lenis({
             duration: 1.2,
@@ -135,7 +140,7 @@ const App = () => {
     }, [location]);
 
     return (
-        <div ref={containerRef} className={`${theme} relative min-h-screen transition-colors duration-500 bg-[var(--background)] flex flex-col text-[var(--foreground)]`}>
+        <div ref={containerRef} className={`${!isDashboard ? theme : 'light'} relative min-h-screen transition-colors duration-500 bg-[var(--background)] flex flex-col text-[var(--foreground)]`}>
             <ScrollToTop />
             <div className="noise-overlay" />
             <div ref={cursorDotRef} className="custom-cursor-dot hidden md:block" />
@@ -199,6 +204,8 @@ const App = () => {
                                 <Route path="/dash/leads/:id" element={<LeadDetail />} />
                                 <Route path="/dash/newsletter" element={<NewsletterList />} />
                                 <Route path="/dash/newsletter/new" element={<CampaignComposer />} />
+                                <Route path="/dash/media" element={<MediaManager />} />
+                                <Route path="/dash/live-agent" element={<LiveAgent />} />
                                 <Route path="/dash/seo" element={<SeoManager />} />
                                 <Route path="/dash/settings" element={<SettingsManager />} />
                                 <Route path="/dash/tools" element={<ToolsManager />} />

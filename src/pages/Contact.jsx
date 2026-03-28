@@ -29,10 +29,15 @@ const Contact = () => {
         const formData = new FormData(e.target);
 
         try {
-            const response = await fetch("https://formspree.io/f/xpqjgpzj", {
+            const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001";
+            console.log("Submitting to:", `${apiUrl}/api/leads`);
+            console.log("Form Data:", Object.fromEntries(formData));
+
+            const response = await fetch(`${apiUrl}/api/leads`, {
                 method: "POST",
-                body: formData,
+                body: JSON.stringify(Object.fromEntries(formData)),
                 headers: {
+                    'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
             });
@@ -41,15 +46,19 @@ const Contact = () => {
                 setIsSubmitted(true);
                 e.target.reset();
             } else {
-                const data = await response.json();
+                const data = await response.json().catch(() => ({}));
+                console.error("Server Error Response:", data);
                 if (Object.hasOwn(data, 'errors')) {
                     alert(data["errors"].map(error => error["message"]).join(", "));
+                } else if (data.error) {
+                    alert(`Submission failed: ${data.error}`);
                 } else {
-                    alert("Oops! There was a problem submitting your form");
+                    alert("Oops! There was a problem submitting your form. Please check if the server is running on port 3001.");
                 }
             }
         } catch (error) {
-            alert("Oops! There was a problem submitting your form");
+            console.error("Submission Crash:", error);
+            alert(`Oops! There was a problem submitting your form: ${error.message}. Please restart the server.`);
         } finally {
             setIsSubmitting(false);
         }

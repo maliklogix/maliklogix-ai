@@ -38,6 +38,51 @@ app.post('/api/admin/upload', upload.single('image'), (req, res) => {
     res.json({ url: fileUrl });
 });
 
+// GET all uploaded media files
+app.get('/api/admin/media', async (req, res) => {
+    const uploadsDir = path.join(__dirname, 'public/uploads');
+    try {
+        if (!fs.existsSync(uploadsDir)) {
+            return res.json([]);
+        }
+        const files = await fs.promises.readdir(uploadsDir);
+        const fileDetails = await Promise.all(
+            files.map(async (file) => {
+                const stats = await fs.promises.stat(path.join(uploadsDir, file));
+                return {
+                    name: file,
+                    url: `http://localhost:3001/uploads/${file}`,
+                    size: stats.size,
+                    time: stats.mtime,
+                    isImage: /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file)
+                };
+            })
+        );
+        // Sort by newest first
+        res.json(fileDetails.sort((a, b) => b.time - a.time));
+    } catch (error) {
+        console.error('Error reading media library:', error);
+        res.status(500).json({ error: 'Failed to read media library' });
+    }
+});
+
+// DELETE media file
+app.delete('/api/admin/media/:filename', async (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, 'public/uploads', filename);
+    try {
+        if (fs.existsSync(filePath)) {
+            await fs.promises.unlink(filePath);
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: 'File not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        res.status(500).json({ error: 'Failed to delete file' });
+    }
+});
+
 const pool = mysql.createPool({
     uri: process.env.DB_URL,
     waitForConnections: true,
@@ -211,6 +256,62 @@ app.put('/api/admin/leads/:id', async (req, res) => {
     }
 });
 
+// DELETE single lead
+app.delete('/api/admin/leads/:id', async (req, res) => {
+    try {
+        await pool.query("DELETE FROM leads WHERE id=?", [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST batch delete leads
+app.post('/api/admin/leads/batch-delete', async (req, res) => {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ error: 'No IDs provided' });
+    }
+    try {
+        await pool.query("DELETE FROM leads WHERE id IN (?)", [ids]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST new lead from contact form
+app.post('/api/leads', async (req, res) => {
+    console.log('Incoming Lead Submission:', req.body);
+    const { name, email, businessType, budget, message } = req.body;
+    
+    if (!name || !email) {
+        return res.status(400).json({ error: 'Name and email are required' });
+    }
+
+    try {
+        await pool.query(
+            "INSERT INTO leads (name, email, service, source, message, status, priority, country, assigned_to) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [
+                name, 
+                email, 
+                businessType || 'General Inquiry', 
+                budget || 'Not Specified', 
+                message || '', 
+                'new', 
+                'medium',
+                'Unknown', // country default
+                'Malik Farooq' // assigned_to default
+            ]
+        );
+        console.log('Lead saved successfully to database');
+        res.json({ success: true });
+    } catch (error) {
+        console.error('DATABASE ERROR:', error);
+        res.status(500).json({ error: `Database Error: ${error.message}` });
+    }
+});
+
 /**
  * NEWSLETTER ENDPOINTS
  */
@@ -348,6 +449,148 @@ app.get('/api/admin/stats', async (req, res) => {
             openLeads: leads[0].total,
             services: services[0].total
         });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
+ * LIVE AGENT / CHATBOT ENDPOINTS
+ */
+
+// Initialize DB tables for Chat if they don't exist
+const initChatDB = async () => {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS chat_sessions (
+                id VARCHAR(36) PRIMARY KEY,
+                status ENUM('active', 'completed') DEFAULT 'active',
+                user_name VARCHAR(255) DEFAULT 'Visitor',
+                user_email VARCHAR(255),
+                last_message TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS chat_messages (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                session_id VARCHAR(36),
+                role ENUM('user', 'assistant') NOT NULL,
+                sender_name VARCHAR(255) DEFAULT 'MalikBot',
+                content TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (session_id) REFERENCES chat_sessions(id) ON DELETE CASCADE
+            )
+        `);
+        // Check if user_email exists, if not add it (for migration)
+        const [cols] = await pool.query("SHOW COLUMNS FROM chat_sessions LIKE 'user_email'");
+        if (cols.length === 0) {
+            await pool.query("ALTER TABLE chat_sessions ADD COLUMN user_email VARCHAR(255) AFTER user_name");
+        }
+        const [msgCols] = await pool.query("SHOW COLUMNS FROM chat_messages LIKE 'sender_name'");
+        if (msgCols.length === 0) {
+            await pool.query("ALTER TABLE chat_messages ADD COLUMN sender_name VARCHAR(255) DEFAULT 'MalikBot' AFTER role");
+        }
+        const [aiCols] = await pool.query("SHOW COLUMNS FROM chat_sessions LIKE 'is_ai_enabled'");
+        if (aiCols.length === 0) {
+            await pool.query("ALTER TABLE chat_sessions ADD COLUMN is_ai_enabled BOOLEAN DEFAULT TRUE AFTER status");
+        }
+    } catch (err) {
+        console.error('Error initializing Chat DB:', err);
+    }
+};
+initChatDB();
+
+// POST initialize or update session
+app.post('/api/chat/session', async (req, res) => {
+    const { id, user_name, user_email, status } = req.body;
+    try {
+        let sessionId = id;
+        let isAiEnabled = true;
+
+        // 1. Find existing session by email if provided
+        if (user_email) {
+            const [existing] = await pool.query("SELECT id, is_ai_enabled FROM chat_sessions WHERE user_email = ?", [user_email]);
+            if (existing.length > 0) {
+                return res.json({ id: existing[0].id, is_ai_enabled: !!existing[0].is_ai_enabled, success: true });
+            }
+        }
+
+        // 2. Or find by provided ID
+        if (sessionId) {
+            const [existingById] = await pool.query("SELECT id, is_ai_enabled FROM chat_sessions WHERE id = ?", [sessionId]);
+            if (existingById.length > 0) {
+                isAiEnabled = !!existingById[0].is_ai_enabled;
+                await pool.query("UPDATE chat_sessions SET status = ?, user_email = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", [status || 'active', user_email || null, sessionId]);
+            } else {
+                // If ID was provided but not found, insert it
+                await pool.query("INSERT INTO chat_sessions (id, user_name, user_email, status) VALUES (?, ?, ?, ?)", [sessionId, user_name || 'Visitor', user_email || null, status || 'active']);
+            }
+        } else {
+            // 3. Create new session if no Email/ID
+            sessionId = crypto.randomUUID();
+            await pool.query("INSERT INTO chat_sessions (id, user_name, user_email, status) VALUES (?, ?, ?, ?)", [sessionId, user_name || 'Visitor', user_email || null, status || 'active']);
+        }
+
+        res.json({ id: sessionId, is_ai_enabled: isAiEnabled, success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST save a chat message
+app.post('/api/chat/message', async (req, res) => {
+    const { session_id, role, content, sender_name } = req.body;
+    try {
+        await pool.query("INSERT INTO chat_messages (session_id, role, content, sender_name) VALUES (?, ?, ?, ?)", [session_id, role, content, sender_name || (role === 'user' ? 'Client' : 'MalikBot')]);
+        await pool.query("UPDATE chat_sessions SET last_message = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", [content, session_id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET all chat sessions (Admin)
+app.get('/api/admin/chat/sessions', async (req, res) => {
+    try {
+        const [rows] = await pool.query("SELECT * FROM chat_sessions ORDER BY updated_at DESC");
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET messages for a session (Admin)
+app.get('/api/admin/chat/sessions/:id', async (req, res) => {
+    const { id } = req.params;
+    console.log(`[ADMIN] Fetching history for session: ${id}`);
+    try {
+        const [rows] = await pool.query("SELECT * FROM chat_messages WHERE session_id = ? ORDER BY created_at ASC", [id]);
+        console.log(`[ADMIN] Found ${rows.length} messages for session ${id}`);
+        res.json(rows);
+    } catch (error) {
+        console.error(`[ADMIN] ERROR fetching history for ${id}:`, error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST toggle AI for a session (Admin)
+app.post('/api/admin/chat/sessions/:id/toggle-ai', async (req, res) => {
+    const { enabled } = req.body;
+    try {
+        await pool.query("UPDATE chat_sessions SET is_ai_enabled = ? WHERE id = ?", [enabled, req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// DELETE chat session (Admin)
+app.delete('/api/admin/chat/sessions/:id', async (req, res) => {
+    try {
+        await pool.query("DELETE FROM chat_sessions WHERE id = ?", [req.params.id]);
+        res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
