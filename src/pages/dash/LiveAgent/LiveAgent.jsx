@@ -117,7 +117,7 @@ const LiveAgent = () => {
         <div className="flex bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-black/5 overflow-hidden h-[calc(100vh-160px)] min-h-[600px]">
             
             {/* Session Sidebar */}
-            <div className="w-80 md:w-96 border-r border-gray-50 flex flex-col bg-gray-50/30">
+            <div className="w-[420px] min-w-[420px] flex-shrink-0 border-r border-gray-50 flex flex-col bg-gray-50/30">
                 <div className="p-6 border-b border-gray-50 bg-white/50 backdrop-blur-md sticky top-0 z-10">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-display font-black text-gray-900 tracking-tight flex items-center gap-2">
