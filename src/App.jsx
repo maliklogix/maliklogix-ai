@@ -23,6 +23,8 @@ import Founder from './pages/Founder';
 import About from './pages/About';
 import Legal from './pages/Legal';
 import Docs from './pages/Docs';
+import NotFound from './pages/NotFound';
+
 
 
 // Service Pages
@@ -179,6 +181,8 @@ const App = () => {
                         <Route path="/legal" element={<Legal />} />
                         <Route path="/docs" element={<Docs />} />
                         <Route path="/philosophy" element={<Philosophy />} />
+                        <Route path="*" element={<NotFound />} />
+
 
 
                         {/* Dashboard Routes */}

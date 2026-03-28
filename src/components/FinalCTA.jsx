@@ -16,10 +16,11 @@ const FinalCTA = () => {
                 </div>
 
                 <div className="flex flex-col gap-6 w-full md:w-auto items-center">
-                    <Link to="/contact" className="px-12 py-7 bg-white text-accent font-bold rounded-[1.5rem] text-2xl flex items-center justify-center gap-4 hover:scale-105 transition-all active:scale-95 shadow-2xl shadow-black/10 hover:shadow-white/20">
+                    <Link to="/contact" className="px-6 py-4 md:px-10 md:py-6 bg-white text-accent font-bold rounded-[1.5rem] text-sm md:text-lg flex items-center justify-center gap-3 hover:scale-105 transition-all active:scale-95 shadow-2xl shadow-black/10 hover:shadow-white/20 w-full md:w-auto text-center">
                         Book a Free Automation Strategy Call
-                        <ArrowUpRight size={28} />
+                        <ArrowUpRight size={20} />
                     </Link>
+
                     <div className="flex items-center gap-3 opacity-60">
                         <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
                         <span className="font-mono text-[10px] uppercase tracking-widest text-white">Free Audit Available Today</span>

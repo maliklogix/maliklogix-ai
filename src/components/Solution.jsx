@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
+import CircuitDiagram from './CircuitDiagram';
+
 
 const Solution = () => {
     const sectionRef = useRef(null);
@@ -67,7 +69,12 @@ const Solution = () => {
                     </div>
                 </div>
 
-                <div ref={diagramRef} className="lg:w-1/2 relative">
+                <div ref={diagramRef} className="lg:w-1/2 relative min-h-[420px]">
+                    {/* Circuit diagram as background visual */}
+                    <div className="absolute inset-0 opacity-60 pointer-events-none">
+                        <CircuitDiagram className="w-full h-full" />
+                    </div>
+
                     <div className="space-y-12 relative z-10">
                         {[
                             { label: "1. Data & Triggers", color: "bg-[var(--card-bg)] border-[var(--border)] text-[var(--foreground)]" },
@@ -93,6 +100,7 @@ const Solution = () => {
             {/* Ambient Lighting */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
         </section>
+
     );
 };
 

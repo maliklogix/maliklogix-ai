@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere, MeshDistortMaterial, Float, Stars } from '@react-three/drei';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -9,35 +7,14 @@ import {
     CheckCircle, TrendingUp, Zap, Eye, Users, DollarSign, ChevronDown, Store, FileSpreadsheet, Bot, Workflow
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import CircuitDiagram from '../components/CircuitDiagram';
+
+
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── 3D Hero Orb ── */
-function AnimatedOrb() {
-    const meshRef = useRef();
-    useFrame((state) => {
-        if (meshRef.current) {
-            meshRef.current.rotation.x = state.clock.elapsedTime * 0.15;
-            meshRef.current.rotation.y = state.clock.elapsedTime * 0.2;
-        }
-    });
-    return (
-        <Float speed={2} rotationIntensity={0.5} floatIntensity={1.5}>
-            <Sphere ref={meshRef} args={[1.6, 128, 128]}>
-                <MeshDistortMaterial
-                    color="#06B6D4"
-                    attach="material"
-                    distort={0.45}
-                    speed={2.5}
-                    roughness={0}
-                    metalness={0.8}
-                    transparent
-                    opacity={0.85}
-                />
-            </Sphere>
-        </Float>
-    );
-}
+
+
 
 /* ── Data ── */
 const ALL_SERVICES = [
@@ -164,16 +141,12 @@ export default function Services() {
                         </div>
                     </div>
 
-                    {/* 3D Canvas */}
-                    <div className="h-[380px] lg:h-[480px] w-full">
-                        <Canvas camera={{ position: [0, 0, 4.5], fov: 50 }}>
-                            <ambientLight intensity={0.5} />
-                            <pointLight position={[5, 5, 5]} intensity={1.5} color="#06B6D4" />
-                            <pointLight position={[-5, -5, 2]} intensity={0.8} color="#7C3AED" />
-                            <Stars radius={80} depth={50} count={3000} factor={4} fade />
-                            <AnimatedOrb />
-                        </Canvas>
+                    {/* Circuit Flow Diagram */}
+                    <div className="h-[380px] lg:h-[480px] w-full flex items-center justify-center">
+                        <CircuitDiagram className="w-full h-full" />
                     </div>
+
+
                 </div>
 
                 {/* Subtle static ambient — no blur ON content */}
