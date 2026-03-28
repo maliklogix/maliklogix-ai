@@ -9,7 +9,7 @@ export default function Blog() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        fetch('http://localhost:3001/api/posts')
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/posts`)
             .then(res => res.json())
             .then(data => {
                 setPosts(data);

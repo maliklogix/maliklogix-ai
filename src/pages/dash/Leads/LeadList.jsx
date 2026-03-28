@@ -103,7 +103,7 @@ const LeadList = () => {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        fetch('http://localhost:3001/api/admin/leads')
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/leads`)
             .then(res => res.json())
             .then(data => {
                 setLeads(data);

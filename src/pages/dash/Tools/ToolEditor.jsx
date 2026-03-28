@@ -32,7 +32,7 @@ const ToolEditor = () => {
     });
 
     useEffect(() => {
-        fetch(`http://localhost:3001/api/admin/tools/${id}`)
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/tools/${id}`)
             .then(res => res.json())
             .then(data => {
                 setFormData(data);
@@ -47,7 +47,7 @@ const ToolEditor = () => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            const res = await fetch(`http://localhost:3001/api/admin/tools/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/tools/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

@@ -67,7 +67,7 @@ const ServiceList = () => {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        fetch('http://localhost:3001/api/admin/services')
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/services`)
             .then(res => res.json())
             .then(data => {
                 setServices(data);

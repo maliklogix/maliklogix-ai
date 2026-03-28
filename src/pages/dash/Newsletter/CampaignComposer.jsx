@@ -27,7 +27,7 @@ const CampaignComposer = () => {
     const handleSave = async (status = 'draft') => {
         setSaving(true);
         try {
-            const res = await fetch('http://localhost:3001/api/admin/newsletters', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/newsletters`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...formData, status })

@@ -52,7 +52,7 @@ const BlogEditor = () => {
 
     useEffect(() => {
         if (isEdit) {
-            fetch(`http://localhost:3001/api/admin/posts/${id}`)
+            fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/posts/${id}`)
                 .then(res => res.json())
                 .then(data => {
                     const tags = typeof data.tags === 'string' ? JSON.parse(data.tags) : (data.tags || []);
@@ -105,7 +105,7 @@ const BlogEditor = () => {
 
         setUploading(true);
         try {
-            const res = await fetch('http://localhost:3001/api/admin/upload', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/upload`, {
                 method: 'POST',
                 body: formDataPayload
             });
@@ -134,8 +134,8 @@ const BlogEditor = () => {
         };
 
         const url = isEdit 
-            ? `http://localhost:3001/api/admin/posts/${id}` 
-            : `http://localhost:3001/api/admin/posts`;
+            ? `${import.meta.env.VITE_API_URL || ""}/api/admin/posts/${id}` 
+            : `${import.meta.env.VITE_API_URL || ""}/api/admin/posts`;
         
         const method = isEdit ? 'PUT' : 'POST';
 

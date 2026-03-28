@@ -54,7 +54,7 @@ const DashOverview = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:3001/api/admin/stats')
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/stats`)
             .then(res => res.json())
             .then(data => {
                 setStats(data);

@@ -37,7 +37,7 @@ const ServiceEditor = () => {
     });
 
     useEffect(() => {
-        fetch(`http://localhost:3001/api/admin/services/${slug}`)
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/services/${slug}`)
             .then(res => res.json())
             .then(data => {
                 setFormData({
@@ -57,7 +57,7 @@ const ServiceEditor = () => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            const res = await fetch(`http://localhost:3001/api/admin/services/${slug}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/services/${slug}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

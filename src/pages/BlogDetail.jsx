@@ -65,7 +65,7 @@ export default function BlogDetail() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        fetch(`http://localhost:3001/api/posts/${slug}`)
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/posts/${slug}`)
             .then(res => {
                 if (!res.ok) throw new Error('Not found');
                 return res.json();

@@ -86,7 +86,7 @@ const HeaderScripts = () => {
 
     const fetchConfig = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/admin/scripts');
+            const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/scripts`);
             const data = await res.json();
             setConfig(data);
         } catch (err) {
@@ -98,7 +98,7 @@ const HeaderScripts = () => {
 
     const handleSave = async (updatedConfig) => {
         try {
-            const res = await fetch('http://localhost:3001/api/admin/scripts', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/scripts`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedConfig || config)

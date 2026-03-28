@@ -421,6 +421,9 @@ app.listen(port, () => {
 // non-API request. React Router then handles /dash, /contact, etc. client-side.
 app.use(express.static(path.join(__dirname, 'dist')));
 
-app.get('*', (req, res) => {
+
+
+app.get('/{*path}', (req, res) => {
+
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });

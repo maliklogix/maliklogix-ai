@@ -40,9 +40,9 @@ const NewsletterList = () => {
         const fetchData = async () => {
             try {
                 const [statsRes, subRes, campRes] = await Promise.all([
-                    fetch('http://localhost:3001/api/admin/stats/newsletters'),
-                    fetch('http://localhost:3001/api/admin/subscribers'),
-                    fetch('http://localhost:3001/api/admin/newsletters')
+                    fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/stats/newsletters`),
+                    fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/subscribers`),
+                    fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/newsletters`)
                 ]);
                 
                 setStats(await statsRes.json());

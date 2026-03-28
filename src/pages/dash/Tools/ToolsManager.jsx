@@ -65,7 +65,7 @@ const ToolsManager = () => {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        fetch('http://localhost:3001/api/admin/tools')
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/tools`)
             .then(res => res.json())
             .then(data => {
                 setTools(data);

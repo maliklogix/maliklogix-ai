@@ -26,7 +26,7 @@ const LeadDetail = () => {
     const [reply, setReply] = useState('');
 
     useEffect(() => {
-        fetch(`http://localhost:3001/api/admin/leads/${id}`)
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/leads/${id}`)
             .then(res => res.json())
             .then(data => {
                 setLead(data);
@@ -41,7 +41,7 @@ const LeadDetail = () => {
     const handleUpdateStatus = async (newStatus) => {
         setUpdating(true);
         try {
-            const res = await fetch(`http://localhost:3001/api/admin/leads/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/leads/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...lead, status: newStatus })

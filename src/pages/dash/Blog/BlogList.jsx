@@ -50,7 +50,7 @@ const BlogList = () => {
 
     const loadPosts = () => {
         setLoading(true);
-        fetch('http://localhost:3001/api/admin/posts')
+        fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/posts`)
             .then(res => res.json())
             .then(data => {
                 setPosts(data);
@@ -67,7 +67,7 @@ const BlogList = () => {
         if (!window.confirm(`Are you sure you want to delete "${title}"?`)) return;
 
         try {
-            const res = await fetch(`http://localhost:3001/api/admin/posts/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/posts/${id}`, {
                 method: 'DELETE'
             });
             if (res.ok) {
