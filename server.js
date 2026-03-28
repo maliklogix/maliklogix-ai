@@ -34,7 +34,7 @@ const upload = multer({ storage: storage });
 // File Upload Endpoint
 app.post('/api/admin/upload', upload.single('image'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    const fileUrl = `http://localhost:3001/uploads/${req.file.filename}`;
+    const fileUrl = `/uploads/${req.file.filename}`;
     res.json({ url: fileUrl });
 });
 
@@ -423,7 +423,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 
 
-app.get('/{*path}', (req, res) => {
+app.get('*', (req, res) => {
 
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
