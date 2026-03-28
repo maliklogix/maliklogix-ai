@@ -34,56 +34,18 @@ const upload = multer({ storage: storage });
 // File Upload Endpoint
 app.post('/api/admin/upload', upload.single('image'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const fileUrl = `http://localhost:3001/uploads/${req.file.filename}`;
     res.json({ url: fileUrl });
 });
 
-const DB_URL = process.env.DB_URL;
 const pool = mysql.createPool({
-    uri: DB_URL,
+    uri: process.env.DB_URL,
     waitForConnections: true,
-    connectionLimit: 15,
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 5000,
-    connectTimeout: 20000, // 20 seconds
-    acquireTimeout: 20000,
-    timeout: 30000
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-// Test connection
-pool.getConnection()
-    .then(conn => {
-        console.log('Successfully connected to Hostinger MySQL');
-        conn.release();
-    })
-    .catch(err => {
-        console.error('Initial DB Connection Error:', err);
-    });
 
-// Helper for retrying queries with explicit connection management
-const executeQuery = async (query, params = [], retries = 3) => {
-    let lastError;
-    for (let i = 0; i < retries; i++) {
-        let connection;
-        try {
-            connection = await pool.getConnection();
-            const [results] = await connection.query(query, params);
-            return [results];
-        } catch (error) {
-            lastError = error;
-            if ((error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT' || error.fatal) && i < retries - 1) {
-                console.warn(`Database connection error (${error.code}). Retrying (${i + 1}/${retries})...`);
-                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s instead of 1s
-                continue;
-            }
-            throw error;
-        } finally {
-            if (connection) connection.release();
-        }
-    }
-    throw lastError;
-};
 
 // GET all published blog posts
 app.get('/api/posts', async (req, res) => {
@@ -101,7 +63,7 @@ app.get('/api/posts', async (req, res) => {
 // GET all posts for admin (including drafts)
 app.get('/api/admin/posts', async (req, res) => {
     try {
-        const [rows] = await executeQuery(
+        const [rows] = await pool.query(
             "SELECT id, title, subtitle, slug, category, status, author_name, published_at, created_at FROM posts ORDER BY created_at DESC"
         );
         res.json(rows);
@@ -114,7 +76,7 @@ app.get('/api/admin/posts', async (req, res) => {
 // GET single post for admin
 app.get('/api/admin/posts/:id', async (req, res) => {
     try {
-        const [rows] = await executeQuery("SELECT * FROM posts WHERE id = ?", [req.params.id]);
+        const [rows] = await pool.query("SELECT * FROM posts WHERE id = ?", [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ error: 'Post not found' });
         res.json(rows[0]);
     } catch (error) {
@@ -128,7 +90,7 @@ app.post('/api/admin/posts', async (req, res) => {
     const { title, subtitle, slug, content_html, category, status, author_name, cover_image_url, tags, published_at } = req.body;
     const id = crypto.randomUUID();
     try {
-        await executeQuery(
+        await pool.query(
             "INSERT INTO posts (id, title, subtitle, slug, content_html, category, status, author_name, cover_image_url, tags, published_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [id, title, subtitle, slug, content_html, category, status || 'draft', author_name || 'Admin', cover_image_url, JSON.stringify(tags || []), published_at || null]
         );
@@ -144,7 +106,7 @@ app.put('/api/admin/posts/:id', async (req, res) => {
     console.log(`Received UPDATE POST request for ID ${req.params.id}:`, req.body);
     const { title, subtitle, slug, content_html, category, status, author_name, cover_image_url, tags, published_at } = req.body;
     try {
-        await executeQuery(
+        await pool.query(
             "UPDATE posts SET title=?, subtitle=?, slug=?, content_html=?, category=?, status=?, author_name=?, cover_image_url=?, tags=?, published_at=? WHERE id=?",
             [title, subtitle, slug, content_html, category, status, author_name, cover_image_url, JSON.stringify(tags || []), published_at || null, req.params.id]
         );
@@ -159,7 +121,7 @@ app.put('/api/admin/posts/:id', async (req, res) => {
 app.delete('/api/admin/posts/:id', async (req, res) => {
     console.log(`Attempting to delete post with ID: ${req.params.id}`);
     try {
-        const [result] = await executeQuery("DELETE FROM posts WHERE id = ?", [req.params.id]);
+        const [result] = await pool.query("DELETE FROM posts WHERE id = ?", [req.params.id]);
         console.log(`Delete result:`, result);
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Post not found or already deleted' });
@@ -178,7 +140,7 @@ app.delete('/api/admin/posts/:id', async (req, res) => {
 // GET all services
 app.get('/api/admin/services', async (req, res) => {
     try {
-        const [rows] = await executeQuery("SELECT * FROM services ORDER BY group_name, title");
+        const [rows] = await pool.query("SELECT * FROM services ORDER BY group_name, title");
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -188,7 +150,7 @@ app.get('/api/admin/services', async (req, res) => {
 // GET single service
 app.get('/api/admin/services/:slug', async (req, res) => {
     try {
-        const [rows] = await executeQuery("SELECT * FROM services WHERE slug = ?", [req.params.slug]);
+        const [rows] = await pool.query("SELECT * FROM services WHERE slug = ?", [req.params.slug]);
         if (rows.length === 0) return res.status(404).json({ error: 'Service not found' });
         res.json(rows[0]);
     } catch (error) {
@@ -200,7 +162,7 @@ app.get('/api/admin/services/:slug', async (req, res) => {
 app.put('/api/admin/services/:slug', async (req, res) => {
     const { title, subtitle, group_name, status, hero_description, cta_primary, cta_secondary, benefits, steps, stats, meta_title, meta_desc, og_image } = req.body;
     try {
-        await executeQuery(
+        await pool.query(
             "UPDATE services SET title=?, subtitle=?, group_name=?, status=?, hero_description=?, cta_primary=?, cta_secondary=?, benefits=?, steps=?, stats=?, meta_title=?, meta_desc=?, og_image=? WHERE slug=?",
             [title, subtitle, group_name, status, hero_description, cta_primary, cta_secondary, JSON.stringify(benefits), JSON.stringify(steps), JSON.stringify(stats), meta_title, meta_desc, og_image, req.params.slug]
         );
@@ -217,7 +179,7 @@ app.put('/api/admin/services/:slug', async (req, res) => {
 // GET all leads
 app.get('/api/admin/leads', async (req, res) => {
     try {
-        const [rows] = await executeQuery("SELECT * FROM leads ORDER BY created_at DESC");
+        const [rows] = await pool.query("SELECT * FROM leads ORDER BY created_at DESC");
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -227,7 +189,7 @@ app.get('/api/admin/leads', async (req, res) => {
 // GET single lead
 app.get('/api/admin/leads/:id', async (req, res) => {
     try {
-        const [rows] = await executeQuery("SELECT * FROM leads WHERE id = ?", [req.params.id]);
+        const [rows] = await pool.query("SELECT * FROM leads WHERE id = ?", [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ error: 'Lead not found' });
         res.json(rows[0]);
     } catch (error) {
@@ -239,7 +201,7 @@ app.get('/api/admin/leads/:id', async (req, res) => {
 app.put('/api/admin/leads/:id', async (req, res) => {
     const { status, priority, assigned_to } = req.body;
     try {
-        await executeQuery(
+        await pool.query(
             "UPDATE leads SET status=?, priority=?, assigned_to=? WHERE id=?",
             [status, priority, assigned_to, req.params.id]
         );
@@ -256,7 +218,7 @@ app.put('/api/admin/leads/:id', async (req, res) => {
 // GET all subscribers
 app.get('/api/admin/subscribers', async (req, res) => {
     try {
-        const [rows] = await executeQuery("SELECT * FROM subscribers ORDER BY created_at DESC");
+        const [rows] = await pool.query("SELECT * FROM subscribers ORDER BY created_at DESC");
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -266,8 +228,8 @@ app.get('/api/admin/subscribers', async (req, res) => {
 // GET newsletter stats
 app.get('/api/admin/stats/newsletters', async (req, res) => {
     try {
-        const [subRow] = await executeQuery("SELECT COUNT(*) as total FROM subscribers WHERE status = 'active'");
-        const [sentRow] = await executeQuery("SELECT COUNT(*) as total FROM newsletters WHERE status = 'sent'");
+        const [subRow] = await pool.query("SELECT COUNT(*) as total FROM subscribers WHERE status = 'active'");
+        const [sentRow] = await pool.query("SELECT COUNT(*) as total FROM newsletters WHERE status = 'sent'");
         res.json({
             totalSubscribers: subRow[0].total,
             campaignsSent: sentRow[0].total
@@ -280,7 +242,7 @@ app.get('/api/admin/stats/newsletters', async (req, res) => {
 // GET all newsletters (campaigns)
 app.get('/api/admin/newsletters', async (req, res) => {
     try {
-        const [rows] = await executeQuery("SELECT * FROM newsletters ORDER BY created_at DESC");
+        const [rows] = await pool.query("SELECT * FROM newsletters ORDER BY created_at DESC");
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -291,7 +253,7 @@ app.get('/api/admin/newsletters', async (req, res) => {
 app.post('/api/admin/newsletters', async (req, res) => {
     const { subject, content_html, status, scheduled_for } = req.body;
     try {
-        const [result] = await executeQuery(
+        const [result] = await pool.query(
             "INSERT INTO newsletters (subject, content_html, status, scheduled_for) VALUES (?, ?, ?, ?)",
             [subject, content_html, status || 'draft', scheduled_for]
         );
@@ -308,7 +270,7 @@ app.post('/api/admin/newsletters', async (req, res) => {
 // GET all tools
 app.get('/api/admin/tools', async (req, res) => {
     try {
-        const [rows] = await executeQuery("SELECT * FROM site_tools ORDER BY category, name");
+        const [rows] = await pool.query("SELECT * FROM site_tools ORDER BY category, name");
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -318,7 +280,7 @@ app.get('/api/admin/tools', async (req, res) => {
 // GET single tool
 app.get('/api/admin/tools/:id', async (req, res) => {
     try {
-        const [rows] = await executeQuery("SELECT * FROM site_tools WHERE id = ?", [req.params.id]);
+        const [rows] = await pool.query("SELECT * FROM site_tools WHERE id = ?", [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ error: 'Tool not found' });
         res.json(rows[0]);
     } catch (error) {
@@ -330,7 +292,7 @@ app.get('/api/admin/tools/:id', async (req, res) => {
 app.put('/api/admin/tools/:id', async (req, res) => {
     const { name, description, category, status, cta_text, cta_url, icon_name } = req.body;
     try {
-        await executeQuery(
+        await pool.query(
             "UPDATE site_tools SET name=?, description=?, category=?, status=?, cta_text=?, cta_url=?, icon_name=? WHERE id=?",
             [name, description, category, status, cta_text, cta_url, icon_name, req.params.id]
         );
@@ -375,11 +337,11 @@ app.post('/api/admin/scripts', async (req, res) => {
 
 app.get('/api/admin/stats', async (req, res) => {
     try {
-        const [posts] = await executeQuery("SELECT COUNT(*) as total FROM posts");
-        const [subs] = await executeQuery("SELECT COUNT(*) as total FROM subscribers WHERE status = 'active'");
-        const [leads] = await executeQuery("SELECT COUNT(*) as total FROM leads WHERE status = 'new'");
-        const [services] = await executeQuery("SELECT COUNT(*) as total FROM services");
-        
+        const [posts] = await pool.query("SELECT COUNT(*) as total FROM posts");
+        const [subs] = await pool.query("SELECT COUNT(*) as total FROM subscribers WHERE status = 'active'");
+        const [leads] = await pool.query("SELECT COUNT(*) as total FROM leads WHERE status = 'new'");
+        const [services] = await pool.query("SELECT COUNT(*) as total FROM services");
+
         res.json({
             posts: posts[0].total,
             subscribers: subs[0].total,
@@ -399,11 +361,11 @@ app.get('/api/posts/:slug', async (req, res) => {
             "SELECT * FROM posts WHERE slug = ? AND status = 'published' LIMIT 1",
             [slug]
         );
-        
+
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Post not found' });
         }
-        
+
         res.json(rows[0]);
     } catch (error) {
         console.error('Error fetching post by slug:', error);
@@ -423,7 +385,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 
 
-app.get('*', (req, res) => {
+app.get('/{*path}', (req, res) => {
 
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
