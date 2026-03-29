@@ -17,7 +17,8 @@ import {
     X,
     ChevronLeft,
     ChevronRight,
-    Ticket
+    Ticket,
+    Video
 } from 'lucide-react';
 
 const navItems = [
@@ -30,6 +31,7 @@ const navItems = [
     { name: 'SEO Manager', icon: Search, href: '/dash/seo' },
     { name: 'Social Media', icon: Share2, href: '/dash/social-media' },
     { name: 'Stack Coupons', icon: Ticket, href: '/dash/stack' },
+    { name: 'YouTube Content', icon: Video, href: '/dash/youtube' },
     { name: 'OpenClaw Tools', icon: Brain, href: '/dash/tools' },
     { name: 'Media Library', icon: ImageIcon, href: '/dash/media' },
 ];
@@ -44,11 +46,11 @@ const Sidebar = ({ isOpen, onClose, onToggle }) => {
 
     return (
         <aside className={`
-            fixed lg:sticky top-0 left-0 z-[70] h-screen bg-[#0f1117] border-r border-white/5 flex flex-col shrink-0
-            transition-all duration-300 ease-in-out
+            fixed lg:sticky top-4 left-0 lg:left-auto z-[70] h-[calc(100vh-32px)] bg-[#0f1117]/95 backdrop-blur-2xl border border-white/10 flex flex-col shrink-0 shadow-[0_20px_50px_rgba(0,0,0,0.3)]
+            transition-all duration-300 ease-in-out lg:ml-4 lg:mr-2 lg:top-4 rounded-3xl
             ${isOpen 
-                ? 'w-[260px] translate-x-0' 
-                : 'w-[80px] -translate-x-full lg:translate-x-0'}
+                ? 'w-[260px] translate-x-4 lg:translate-x-0' 
+                : 'w-[80px] -translate-x-[120%] lg:translate-x-0'}
         `}>
             {/* Brand Header Section (Curved Card) */}
             <div className={`relative px-4 pt-6 pb-8 mb-6 ${isOpen ? '' : 'px-2'}`}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { Menu, X, ChevronDown, ChevronUp, Tag, Handshake, Users, FileText, Link2, Video, Smartphone, Monitor, Mail, Mic } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronUp, ChevronRight, Tag, Handshake, Users, FileText, Link2, Video, Smartphone, Monitor, Mail, Mic, Instagram, Github, Twitter, MessageCircle, Info, BookOpen, UserCheck, ShieldCheck, HelpCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import Logo from './Logo';
@@ -70,14 +70,7 @@ const Navbar = () => {
         { name: 'Our Solutions', isMegaMenu: true },
         { 
             name: 'Learn', 
-            dropdownItems: [
-                { name: 'About Agency', href: '/about' },
-                { name: 'The Founder', href: '/founder' },
-                { name: 'How We Work', href: '/philosophy' },
-                { name: 'Blog', href: '/blog' },
-                { name: 'Docs', href: '/docs' },
-                { name: 'Legal Policy', href: '/legal' }
-            ] 
+            isLearnMenu: true
         },
         { name: 'Stack', isStackMenu: true },
         { name: 'Contact', href: '/contact' }
@@ -225,7 +218,7 @@ const Navbar = () => {
                                     </div>
                                 );
                             }
-                            if (link.dropdownItems) {
+                            if (link.isLearnMenu) {
                                 return (
                                     <div key={link.name} className="group relative">
                                         <button
@@ -237,25 +230,58 @@ const Navbar = () => {
                                             <span className="absolute -bottom-1 left-0 h-px bg-accent transition-all duration-300 w-0 group-hover:w-full" />
                                         </button>
                                         
-                                        {/* Standard Dropdown */}
                                         <div 
-                                            className="absolute top-full left-1/2 -translate-x-1/2 mt-6 opacity-0 translate-y-[-6px] invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 ease-out z-[120] min-w-[200px]"
+                                            className="absolute top-full left-1/2 -translate-x-1/2 mt-6 opacity-0 translate-y-[-6px] invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 ease-out z-[120] min-w-[580px]"
                                             role="menu"
                                         >
-                                            {/* Bridge to prevent hover gap issues */}
                                             <div className="absolute top-[-24px] left-0 right-0 h-8 bg-transparent" />
                                             
-                                            <div className="bg-[var(--card-bg)] border border-[var(--border)] border-t-[2px] border-t-accent shadow-[0_12px_40px_rgba(0,0,0,0.10)] rounded-b-2xl py-4 px-3 flex flex-col gap-1">
-                                                {link.dropdownItems.map((item, j) => (
-                                                    <Link 
-                                                        key={j} 
-                                                        to={item.href} 
-                                                        className="px-4 py-2.5 rounded-lg hover:bg-accent/10 transition-colors duration-200 text-[14px] font-medium text-[var(--foreground)] whitespace-nowrap outline-none focus-visible:bg-accent/10 focus-visible:ring-1 focus-visible:ring-accent"
-                                                        role="menuitem"
-                                                    >
-                                                        {item.name}
-                                                    </Link>
-                                                ))}
+                                            <div className="bg-[var(--card-bg)] border border-[var(--border)] border-t-[2px] border-t-accent shadow-[0_12px_40px_rgba(0,0,0,0.10)] rounded-b-2xl py-8 px-8 flex flex-col gap-4">
+                                                <div className="grid grid-cols-2 gap-10">
+                                                    {/* Agency Insights */}
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-[11px] font-bold uppercase tracking-[2px] text-accent px-4 mb-3">Agency Insights</span>
+                                                        {[
+                                                            { title: 'About Agency', desc: 'Our journey & vision.', icon: Info, route: '/about' },
+                                                            { title: 'The Founder', desc: 'Meet the architect.', icon: UserCheck, route: '/founder' },
+                                                            { title: 'Philosopy', desc: 'How we engineering growth.', icon: HelpCircle, route: '/philosophy' },
+                                                            { title: 'Agency Blog', desc: 'Market intelligence.', icon: BookOpen, route: '/blog' },
+                                                            { title: 'Legal & Policy', desc: 'Security & values.', icon: ShieldCheck, route: '/legal' }
+                                                        ].map((item, j) => (
+                                                            <Link key={j} to={item.route} className="flex items-start gap-3 px-4 py-3 rounded-xl hover:bg-accent/10 transition-colors duration-200 outline-none group/learn" role="menuitem">
+                                                                <item.icon className="w-5 h-5 text-accent mt-0.5 shrink-0 transition-transform group-hover/learn:scale-110" />
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-[14px] font-bold text-[var(--foreground)] leading-tight">{item.title}</span>
+                                                                    <span className="text-[11px] text-[var(--secondary)] font-medium mt-0.5">{item.desc}</span>
+                                                                </div>
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Social Hub */}
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-[11px] font-bold uppercase tracking-[2px] text-accent px-4 mb-3">Social Media Hub</span>
+                                                        {[
+                                                            { title: 'YouTube Build Logs', icon: Video, route: '/youtube' },
+                                                            { title: 'Instagram Stories', icon: Instagram, route: '/instagram' },
+                                                            { title: 'GitHub Open Source', icon: Github, route: '/github' },
+                                                            { title: 'X (Twitter) Feed', icon: Twitter, route: '/x' },
+                                                            { title: 'WhatsApp VIP Hub', icon: MessageCircle, route: '/whatsapp' }
+                                                        ].map((item, j) => (
+                                                            <Link key={j} to={item.route} className="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-accent/10 transition-all duration-200 group/social" role="menuitem">
+                                                                <div className="flex items-center gap-3">
+                                                                    <item.icon className="w-5 h-5 text-accent mt-0.5 shrink-0" />
+                                                                    <span className="text-[14px] font-bold text-[var(--foreground)]">{item.title}</span>
+                                                                </div>
+                                                                <ChevronRight size={14} className="text-accent/40 group-hover/social:translate-x-1 transition-transform" />
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="mt-4 pt-4 border-t border-[var(--border)] flex items-center justify-center">
+                                                    <span className="text-[10px] font-mono text-[var(--secondary)] uppercase tracking-[0.3em]">Direct Engagement Active</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -402,7 +428,7 @@ const Navbar = () => {
                                 </div>
                             );
                         }
-                        if (link.dropdownItems) {
+                        if (link.isLearnMenu) {
                             return (
                                 <div key={link.name} className="w-full flex flex-col items-center">
                                     <button 
@@ -413,18 +439,37 @@ const Navbar = () => {
                                         {isMobileLearnOpen ? <ChevronUp className="w-8 h-8" /> : <ChevronDown className="w-8 h-8" />}
                                     </button>
                                     
-                                    {/* Mobile Accordion Content */}
-                                    <div className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isMobileLearnOpen ? 'max-h-[500px] opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'}`}>
-                                        <div className="flex flex-col gap-3 w-full items-center">
-                                            {link.dropdownItems.map((item, j) => (
-                                                <Link 
-                                                    key={j} 
-                                                    to={item.href}
-                                                    className="text-[var(--foreground)] hover:text-accent text-lg font-medium text-center"
-                                                >
-                                                    {item.name}
-                                                </Link>
-                                            ))}
+                                    <div className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isMobileLearnOpen ? 'max-h-[1000px] opacity-100 mt-6' : 'max-h-0 opacity-0 mt-0'}`}>
+                                        <div className="flex flex-col gap-8 w-full items-center">
+                                            <div className="flex flex-col items-center w-full">
+                                                <div className="text-accent font-bold uppercase tracking-[1.5px] text-xs mb-4">Agency Insights</div>
+                                                <div className="flex flex-col gap-3 w-full items-center px-4">
+                                                    {[
+                                                        { name: 'About Agency', href: '/about' },
+                                                        { name: 'The Founder', href: '/founder' },
+                                                        { name: 'Blog', href: '/blog' }
+                                                    ].map((item, j) => (
+                                                        <Link key={j} to={item.href} className="text-[var(--foreground)] hover:text-accent text-lg font-medium text-center">{item.name}</Link>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col items-center w-full">
+                                                <div className="text-accent font-bold uppercase tracking-[1.5px] text-xs mb-4">Social Hub</div>
+                                                <div className="flex flex-col gap-3 w-full items-center">
+                                                    {[
+                                                        { title: 'YouTube Build Logs', icon: Video, route: '/youtube' },
+                                                        { title: 'Instagram Stories', icon: Instagram, route: '/instagram' },
+                                                        { title: 'GitHub Open Source', icon: Github, route: '/github' },
+                                                        { title: 'X Twitter', icon: Twitter, route: '/x' },
+                                                        { title: 'WhatsApp VIP', icon: MessageCircle, route: '/whatsapp' }
+                                                    ].map((item, j) => (
+                                                        <Link key={j} to={item.route} className="flex items-center justify-center gap-3 w-full px-4 text-[var(--foreground)] hover:text-accent text-lg font-medium text-center">
+                                                            <item.icon className="w-5 h-5 text-accent shrink-0" />
+                                                            <span>{item.title}</span>
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -784,6 +784,382 @@ app.get('/api/posts/:slug', async (req, res) => {
     }
 });
 
+/**
+ * YOUTUBE ENDPOINTS
+ */
+
+// Initialize DB tables for YouTube
+const initYoutubeDB = async () => {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS youtube_videos (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                youtubeUrl VARCHAR(500) NOT NULL,
+                thumbnailUrl VARCHAR(500) NOT NULL,
+                description TEXT,
+                publishedAt DATETIME NOT NULL,
+                duration VARCHAR(50),
+                views INT DEFAULT 0,
+                isFeatured BOOLEAN DEFAULT false,
+                createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS youtube_resources (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                type ENUM('doc', 'video_summary', 'ai_title', 'guide', 'tool', 'link', 'other') NOT NULL,
+                url VARCHAR(500) NOT NULL,
+                description TEXT,
+                icon VARCHAR(255),
+                tags VARCHAR(500),
+                createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS youtube_suggestions (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                email VARCHAR(255) NOT NULL,
+                suggestion TEXT NOT NULL,
+                source VARCHAR(50) DEFAULT 'youtube',
+                status ENUM('pending', 'reviewed', 'ignored') DEFAULT 'pending',
+                createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS youtube_settings (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                key_name VARCHAR(255) UNIQUE NOT NULL,
+                value TEXT NOT NULL
+            )
+        `);
+        
+        // Seed default settings if empty
+        const [settings] = await pool.query("SELECT COUNT(*) as count FROM youtube_settings");
+        if (settings[0].count === 0) {
+            await pool.query(`
+                INSERT INTO youtube_settings (key_name, value) VALUES 
+                ('channelUrl', 'https://youtube.com/@maliklogix'),
+                ('channelHandle', '@maliklogix'),
+                ('youtubeApiKey', ''),
+                ('youtubeChannelId', 'UC-maliklogix-id-placeholder'),
+                ('lastSync', '0'),
+                ('showLatest', 'true'),
+                ('showResources', 'true'),
+                ('showSuggest', 'true'),
+                ('resourcesPerPage', '10'),
+                ('successMessage', 'Thanks! Your suggestion has been noted.')
+            `);
+        }
+        console.log('YouTube DB initialized successfully');
+    } catch (err) {
+        console.error('Error initializing YouTube DB:', err);
+    }
+};
+initYoutubeDB();
+
+// --- YOUTUBE SYNC HELPER ---
+const syncYoutubeVideos = async () => {
+    try {
+        const [settingsRows] = await pool.query("SELECT key_name, value FROM youtube_settings");
+        const settings = settingsRows.reduce((acc, row) => ({ ...acc, [row.key_name]: row.value }), {});
+        
+        const apiKey = settings.youtubeApiKey;
+        const channelId = settings.youtubeChannelId;
+
+        if (!apiKey || !channelId) {
+            return { success: false, error: "Missing configuration" };
+        }
+
+        // Fetch 3 most recent videos from YouTube
+        const ytResponse = await fetch(
+            `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=3&type=video`
+        );
+        
+        if (!ytResponse.ok) {
+            const errorData = await ytResponse.json();
+            throw new Error(`YouTube API Error: ${errorData.error?.message || ytResponse.statusText}`);
+        }
+
+        const data = await ytResponse.json();
+        const videos = data.items || [];
+
+        for (const item of videos) {
+            const videoId = item.id.videoId;
+            const title = item.snippet.title;
+            const description = item.snippet.description;
+            const thumbnailUrl = item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url;
+            const publishedAt = item.snippet.publishedAt;
+            const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+            // We use INSERT ... ON DUPLICATE KEY UPDATE but youtubeUrl isn't unique in schema yet.
+            // Let's check if video exists by URL
+            const [existing] = await pool.query("SELECT id FROM youtube_videos WHERE youtubeUrl = ?", [youtubeUrl]);
+            
+            if (existing.length > 0) {
+                await pool.query(
+                    "UPDATE youtube_videos SET title=?, thumbnailUrl=?, description=?, publishedAt=? WHERE id=?",
+                    [title, thumbnailUrl, description, publishedAt, existing[0].id]
+                );
+            } else {
+                await pool.query(
+                    "INSERT INTO youtube_videos (title, youtubeUrl, thumbnailUrl, description, publishedAt, duration, views, isFeatured) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    [title, youtubeUrl, thumbnailUrl, description, publishedAt, 'Auto', 0, 0]
+                );
+            }
+        }
+
+        // Update lastSync timestamp
+        const now = Date.now().toString();
+        await pool.query("UPDATE youtube_settings SET value=? WHERE key_name='lastSync'", [now]);
+        
+        return { success: true, count: videos.length };
+    } catch (error) {
+        console.error("YouTube sync error:", error);
+        return { success: false, error: error.message };
+    }
+};
+
+
+// --- PUBLIC API ROUTES ---
+
+// GET latest videos (limit 3)
+app.get('/api/youtube/videos', async (req, res) => {
+    try {
+        // Auto-sync logic: if lastSync > 24 hours, trigger background sync
+        const [syncRows] = await pool.query("SELECT value FROM youtube_settings WHERE key_name = 'lastSync'");
+        const lastSync = syncRows.length > 0 ? parseInt(syncRows[0].value) : 0;
+        const oneDay = 24 * 60 * 60 * 1000;
+        
+        if (Date.now() - lastSync > oneDay) {
+            syncYoutubeVideos().catch(err => console.error("Auto-sync background error:", err));
+        }
+
+        const [videos] = await pool.query("SELECT * FROM youtube_videos ORDER BY publishedAt DESC LIMIT 3");
+        res.json(videos);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+// GET resources
+app.get('/api/youtube/resources', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const type = req.query.type || 'all';
+        
+        // get limit from settings
+        const [settingRows] = await pool.query("SELECT value FROM youtube_settings WHERE key_name = 'resourcesPerPage'");
+        const limit = settingRows.length > 0 ? parseInt(settingRows[0].value) : 10;
+        const offset = (page - 1) * limit;
+
+        let query = "SELECT * FROM youtube_resources";
+        let params = [];
+        
+        if (type !== 'all') {
+            query += " WHERE type = ?";
+            params.push(type);
+        }
+        
+        const countQuery = query.replace("SELECT *", "SELECT COUNT(*) as total");
+        const [countResult] = await pool.query(countQuery, params);
+        const total = countResult[0].total;
+
+        query += " ORDER BY createdAt DESC LIMIT ? OFFSET ?";
+        params.push(limit, offset);
+        
+        const [resources] = await pool.query(query, params);
+        
+        res.json({
+            data: resources,
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET public settings
+app.get('/api/youtube/settings', async (req, res) => {
+    try {
+        const [settings] = await pool.query("SELECT key_name, value FROM youtube_settings");
+        const config = {};
+        settings.forEach(s => config[s.key_name] = s.value);
+        res.json(config);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST suggestion
+app.post('/api/youtube/suggest', async (req, res) => {
+    try {
+        const { email, suggestion, source } = req.body;
+        if (!email || !suggestion) return res.status(400).json({ error: "Email and suggestion required" });
+        
+        await pool.query("INSERT INTO youtube_suggestions (email, suggestion, source) VALUES (?, ?, ?)", [email, suggestion, source || 'youtube']);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// --- ADMIN API ROUTES ---
+
+// GET all videos
+app.get('/api/admin/youtube/videos', async (req, res) => {
+    try {
+        const [videos] = await pool.query("SELECT * FROM youtube_videos ORDER BY publishedAt DESC");
+        res.json(videos);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/admin/youtube/videos', async (req, res) => {
+    try {
+        const { title, youtubeUrl, thumbnailUrl, description, publishedAt, duration, views, isFeatured } = req.body;
+        await pool.query(
+            "INSERT INTO youtube_videos (title, youtubeUrl, thumbnailUrl, description, publishedAt, duration, views, isFeatured) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            [title, youtubeUrl, thumbnailUrl, description, new Date(publishedAt), duration, views || 0, isFeatured || false]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/api/admin/youtube/videos/:id', async (req, res) => {
+    try {
+        const { title, youtubeUrl, thumbnailUrl, description, publishedAt, duration, views, isFeatured } = req.body;
+        await pool.query(
+            "UPDATE youtube_videos SET title=?, youtubeUrl=?, thumbnailUrl=?, description=?, publishedAt=?, duration=?, views=?, isFeatured=? WHERE id=?",
+            [title, youtubeUrl, thumbnailUrl, description, new Date(publishedAt), duration, views || 0, isFeatured || false, req.params.id]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/admin/youtube/videos/:id', async (req, res) => {
+    try {
+        await pool.query("DELETE FROM youtube_videos WHERE id=?", [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Resources CRUD
+app.get('/api/admin/youtube/resources', async (req, res) => {
+    try {
+        const [resources] = await pool.query("SELECT * FROM youtube_resources ORDER BY createdAt DESC");
+        res.json(resources);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/admin/youtube/resources', async (req, res) => {
+    try {
+        const { title, type, url, description, icon, tags } = req.body;
+        await pool.query(
+            "INSERT INTO youtube_resources (title, type, url, description, icon, tags) VALUES (?, ?, ?, ?, ?, ?)",
+            [title, type, url, description, icon, tags]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/api/admin/youtube/resources/:id', async (req, res) => {
+    try {
+        const { title, type, url, description, icon, tags } = req.body;
+        await pool.query(
+            "UPDATE youtube_resources SET title=?, type=?, url=?, description=?, icon=?, tags=? WHERE id=?",
+            [title, type, url, description, icon, tags, req.params.id]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/admin/youtube/resources/:id', async (req, res) => {
+    try {
+        await pool.query("DELETE FROM youtube_resources WHERE id=?", [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Suggestions
+app.get('/api/admin/youtube/suggestions', async (req, res) => {
+    try {
+        const [suggestions] = await pool.query("SELECT * FROM youtube_suggestions ORDER BY createdAt DESC");
+        res.json(suggestions);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/api/admin/youtube/suggestions/:id', async (req, res) => {
+    try {
+        const { status } = req.body;
+        await pool.query("UPDATE youtube_suggestions SET status=? WHERE id=?", [status, req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/admin/youtube/suggestions/:id', async (req, res) => {
+    try {
+        await pool.query("DELETE FROM youtube_suggestions WHERE id=?", [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Admin Settings
+app.post('/api/admin/youtube/settings', async (req, res) => {
+    try {
+        const settings = req.body;
+        for (const [key, value] of Object.entries(settings)) {
+            await pool.query(
+                "INSERT INTO youtube_settings (key_name, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value=?",
+                [key, String(value), String(value)]
+            );
+        }
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Manual Sync Route
+app.post('/api/admin/youtube/sync', async (req, res) => {
+    try {
+        const result = await syncYoutubeVideos();
+        if (result.success) {
+            res.json({ success: true, message: `Successfully synced ${result.count} videos.` });
+        } else {
+            res.status(400).json({ success: false, error: result.error });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Backend API running at http://localhost:${port}`);
 });
