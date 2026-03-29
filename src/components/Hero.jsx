@@ -1,7 +1,5 @@
 import React, { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Points, PointMaterial } from '@react-three/drei';
-import * as THREE from 'three';
+// Three.js background disabled for performance
 import { gsap } from 'gsap';
 import { useTheme } from '../context/ThemeContext';
 import { Cpu, ShoppingCart, Store, FileSpreadsheet, Workflow } from 'lucide-react';
@@ -9,51 +7,7 @@ import { Link } from 'react-router-dom';
 import AnimationCircle from './AnimationCircle';
 
 
-
-
-const NeuralNetwork = () => {
-    const pointsRef = useRef();
-    const { theme } = useTheme();
-
-    const count = 2500;
-    const positions = useMemo(() => {
-        const pos = new Float32Array(count * 3);
-        for (let i = 0; i < count; i++) {
-            pos[i * 3] = (Math.random() - 0.5) * 12;
-            pos[i * 3 + 1] = (Math.random() - 0.5) * 12;
-            pos[i * 3 + 2] = (Math.random() - 0.5) * 12;
-        }
-        return pos;
-    }, []);
-
-    useFrame((state) => {
-        const time = state.clock.getElapsedTime();
-        if (pointsRef.current) {
-            pointsRef.current.rotation.y = time * 0.04;
-            pointsRef.current.rotation.x = Math.sin(time * 0.06) * 0.1;
-
-            const s = 1 + Math.sin(time * 0.4) * 0.04;
-            pointsRef.current.scale.set(s, s, s);
-        }
-    });
-
-    return (
-        <group rotation={[0, 0, Math.PI / 6]}>
-            <Points ref={pointsRef} positions={positions} stride={3} frustumCulled={false}>
-                <PointMaterial
-                    transparent
-                    color={theme === 'dark' ? "#06B6D4" : "#0891B2"}
-                    size={0.02}
-                    sizeAttenuation={true}
-                    depthWrite={false}
-                    blending={theme === 'dark' ? THREE.AdditiveBlending : THREE.SubtractiveBlending}
-                    opacity={theme === 'dark' ? 0.7 : 0.3}
-                />
-            </Points>
-        </group>
-    );
-};
-
+// NeuralNetwork component removed for performance optimization
 const Hero = () => {
     const containerRef = useRef(null);
     const labelRef = useRef(null);
@@ -113,12 +67,7 @@ const Hero = () => {
 
     return (
         <section ref={containerRef} className="relative min-h-[90vh] w-full px-8 lg:px-20 overflow-hidden bg-[var(--background)] pt-32 pb-20 transition-colors duration-500 flex items-center">
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-                <Canvas camera={{ position: [0, 0, 7], fov: 60 }}>
-                    <ambientLight intensity={0.5} />
-                    <NeuralNetwork />
-                </Canvas>
-            </div>
+            {/* 3D background wrapper removed for performance */}
 
             <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-32 relative z-10">
                 <div className="max-w-2xl text-left">
@@ -145,7 +94,7 @@ const Hero = () => {
                             to="/contact"
                             onMouseMove={handleMagnetic}
                             onMouseLeave={resetMagnetic}
-                            className="magnetic-btn px-5 py-3 md:px-8 md:py-4 bg-accent text-white text-sm md:text-base font-bold rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20 flex items-center justify-center"
+                            className="magnetic-btn px-5 py-3 md:px-8 md:py-4 bg-accent text-white text-xs sm:text-sm md:text-base font-bold rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--background)] leading-tight"
                         >
                             Get Your Free Automation Audit &rarr;
                         </Link>
@@ -155,7 +104,7 @@ const Hero = () => {
                             to="/philosophy"
                             onMouseMove={handleMagnetic}
                             onMouseLeave={resetMagnetic}
-                            className="magnetic-btn px-8 py-4 bg-[var(--foreground)]/[0.05] border border-[var(--border)] text-[var(--foreground)] font-bold rounded-lg hover:bg-[var(--foreground)]/[0.1] transition-all shadow-lg whitespace-nowrap flex items-center justify-center"
+                            className="magnetic-btn px-6 py-3 md:px-8 md:py-4 bg-[var(--foreground)]/[0.05] border border-[var(--border)] text-[var(--foreground)] text-xs sm:text-sm md:text-base font-bold rounded-lg hover:bg-[var(--foreground)]/[0.1] transition-all shadow-lg whitespace-nowrap flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--foreground)]/20 focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--background)]"
                         >
                             See Our Work
                         </Link>

@@ -16,9 +16,9 @@ const FinalCTA = () => {
                 </div>
 
                 <div className="flex flex-col gap-6 w-full md:w-auto items-center">
-                    <Link to="/contact" className="px-6 py-4 md:px-10 md:py-6 bg-white text-accent font-bold rounded-[1.5rem] text-sm md:text-lg flex items-center justify-center gap-3 hover:scale-105 transition-all active:scale-95 shadow-2xl shadow-black/10 hover:shadow-white/20 w-full md:w-auto text-center">
+                    <Link to="/contact" className="px-5 py-3.5 md:px-10 md:py-6 bg-white text-accent font-bold rounded-[1.5rem] text-xs sm:text-sm md:text-lg flex items-center justify-center gap-2 md:gap-3 hover:scale-105 transition-all active:scale-95 shadow-2xl shadow-black/10 hover:shadow-white/20 w-full md:w-auto text-center leading-tight focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-accent">
                         Book a Free Automation Strategy Call
-                        <ArrowUpRight size={20} />
+                        <ArrowUpRight size={20} className="shrink-0" />
                     </Link>
 
                     <div className="flex items-center gap-3 opacity-60">

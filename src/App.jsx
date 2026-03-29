@@ -92,8 +92,6 @@ import { useTheme } from './context/ThemeContext';
 const App = () => {
     const { theme } = useTheme();
     const containerRef = useRef(null);
-    const cursorDotRef = useRef(null);
-    const cursorRingRef = useRef(null);
     const location = useLocation();
     const isDashboard = location.pathname.startsWith('/dash');
 
@@ -114,36 +112,37 @@ const App = () => {
         gsap.ticker.add((time) => { lenis.raf(time * 1000); });
         gsap.ticker.lagSmoothing(0);
 
-        // Custom Cursor Logic
-        const onMouseMove = (e) => {
-            const { clientX, clientY } = e;
-            if (cursorDotRef.current) {
-                cursorDotRef.current.style.left = `${clientX}px`;
-                cursorDotRef.current.style.top = `${clientY}px`;
-            }
-            if (cursorRingRef.current) {
-                gsap.to(cursorRingRef.current, {
-                    left: clientX,
-                    top: clientY,
-                    duration: 0.15,
-                    ease: 'power2.out'
-                });
-            }
+        // Click Ripple Animation
+        const onClick = (e) => {
+            const ripple = document.createElement('div');
+            ripple.className = 'fixed pointer-events-none rounded-full border-2 border-[#06B6D4] z-[9999]';
+            document.body.appendChild(ripple);
+
+            gsap.set(ripple, {
+                x: e.clientX,
+                y: e.clientY,
+                xPercent: -50,
+                yPercent: -50,
+                width: 0,
+                height: 0,
+                opacity: 0.8
+            });
+
+            gsap.to(ripple, {
+                width: 50,
+                height: 50,
+                opacity: 0,
+                duration: 0.5,
+                ease: 'power2.out',
+                onComplete: () => ripple.remove()
+            });
         };
 
-        const onMouseEnter = () => { gsap.to(cursorRingRef.current, { scale: 1.5, borderColor: 'var(--accent)', duration: 0.3 }); };
-        const onMouseLeave = () => { gsap.to(cursorRingRef.current, { scale: 1, borderColor: 'var(--accent)', duration: 0.3 }); };
-
-        window.addEventListener('mousemove', onMouseMove);
-        const interactables = document.querySelectorAll('button, a, input, textarea, [role="button"]');
-        interactables.forEach(el => {
-            el.addEventListener('mouseenter', onMouseEnter);
-            el.addEventListener('mouseleave', onMouseLeave);
-        });
+        window.addEventListener('click', onClick);
 
         return () => {
             lenis.destroy();
-            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('click', onClick);
             gsap.ticker.remove(lenis.raf);
         };
     }, [location]);
@@ -151,9 +150,7 @@ const App = () => {
     return (
         <div ref={containerRef} className={`${!isDashboard ? theme : 'light'} relative min-h-screen transition-colors duration-500 bg-[var(--background)] flex flex-col text-[var(--foreground)]`}>
             <ScrollToTop />
-            <div className="noise-overlay" />
-            <div ref={cursorDotRef} className="custom-cursor-dot hidden md:block" />
-            <div ref={cursorRingRef} className="custom-cursor-ring hidden md:block" />
+            {/* <div className="noise-overlay" /> */}
 
             {!isDashboard && <Navbar />}
 

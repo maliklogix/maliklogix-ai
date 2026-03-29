@@ -44,21 +44,6 @@
   }
 }
 
-/* Custom Cursor */
-.custom-cursor-dot {
-  @apply fixed pointer-events-none z-[9999] rounded-full bg-accent mix-blend-difference;
-  width: 8px;
-  height: 8px;
-  transform: translate(-50%, -50%);
-}
-
-.custom-cursor-ring {
-  @apply fixed pointer-events-none z-[9998] rounded-full border border-accent/30;
-  width: 32px;
-  height: 32px;
-  transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
-}
 
 /* Noise Overlay */
 .noise-overlay {
