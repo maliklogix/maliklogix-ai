@@ -24,6 +24,7 @@ import About from './pages/About';
 import Legal from './pages/Legal';
 import Docs from './pages/Docs';
 import NotFound from './pages/NotFound';
+import CouponsPage from './pages/stack/CouponsPage';
 
 
 
@@ -74,6 +75,7 @@ import LiveAgent from './pages/dash/LiveAgent/LiveAgent';
 import ToolsManager from './pages/dash/Tools/ToolsManager';
 import ToolEditor from './pages/dash/Tools/ToolEditor';
 import SocialMedia from './pages/dash/SocialMedia/SocialMedia';
+import StackManager from './pages/dash/Stack/StackManager';
 import { ToastProvider } from './components/dash/Toast';
 
 // Register GSAP plugins
@@ -180,6 +182,8 @@ const App = () => {
                         <Route path="/tools/openclaw/extensions" element={<ExtensionsPage />} />
                         <Route path="/tools/openclaw/submit" element={<SubmitPage />} />
                         
+                        <Route path="/stack/coupons" element={<CouponsPage />} />
+                        
                         <Route path="/blog" element={<Blog />} />
                         <Route path="/blog/:slug" element={<BlogDetail />} />
                         <Route path="/founder" element={<Founder />} />
@@ -210,6 +214,7 @@ const App = () => {
                                 <Route path="/dash/seo" element={<SeoManager />} />
                                 <Route path="/dash/settings" element={<SettingsManager />} />
                                 <Route path="/dash/social-media" element={<SocialMedia />} />
+                                <Route path="/dash/stack" element={<StackManager />} />
                                 <Route path="/dash/tools" element={<ToolsManager />} />
                                 <Route path="/dash/tools/:id/edit" element={<ToolEditor />} />
                             </Route>

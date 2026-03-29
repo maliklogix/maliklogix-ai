@@ -455,6 +455,174 @@ app.get('/api/admin/stats', async (req, res) => {
 });
 
 /**
+ * STACK ENDPOINTS (Coupons & Deals)
+ */
+
+// Initialize DB tables for Stack Coupons & Deals
+const initStackDB = async () => {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS stack_companies (
+                id VARCHAR(36) PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                description VARCHAR(255),
+                logo_url VARCHAR(500),
+                affiliate_url VARCHAR(500),
+                status ENUM('active', 'inactive') DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS stack_coupons (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                company_id VARCHAR(36) NOT NULL,
+                title VARCHAR(255) NOT NULL,
+                description TEXT,
+                type ENUM('coupon', 'deal') DEFAULT 'deal',
+                code VARCHAR(100),
+                affiliate_url VARCHAR(500),
+                status ENUM('active', 'inactive') DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (company_id) REFERENCES stack_companies(id) ON DELETE CASCADE
+            )
+        `);
+        console.log('Stack DB initialized successfully');
+    } catch (err) {
+        console.error('Error initializing Stack DB:', err);
+    }
+};
+initStackDB();
+
+// GET all active companies and their active coupons for public display
+app.get('/api/stack/public', async (req, res) => {
+    try {
+        const [companies] = await pool.query("SELECT * FROM stack_companies WHERE status = 'active' ORDER BY name ASC");
+        const [coupons] = await pool.query("SELECT * FROM stack_coupons WHERE status = 'active' ORDER BY created_at DESC");
+        
+        // Group coupons by company
+        const stackData = companies.map(comp => {
+            return {
+                ...comp,
+                coupons: coupons.filter(c => c.company_id === comp.id)
+            };
+        });
+        
+        res.json(stackData);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET all companies for admin
+app.get('/api/admin/stack/companies', async (req, res) => {
+    try {
+        const [rows] = await pool.query("SELECT * FROM stack_companies ORDER BY created_at DESC");
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET single company
+app.get('/api/admin/stack/companies/:id', async (req, res) => {
+    try {
+        const [rows] = await pool.query("SELECT * FROM stack_companies WHERE id = ?", [req.params.id]);
+        if (rows.length === 0) return res.status(404).json({ error: 'Company not found' });
+        res.json(rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST new company
+app.post('/api/admin/stack/companies', async (req, res) => {
+    const { name, description, logo_url, affiliate_url, status } = req.body;
+    const id = crypto.randomUUID();
+    try {
+        await pool.query(
+            "INSERT INTO stack_companies (id, name, description, logo_url, affiliate_url, status) VALUES (?, ?, ?, ?, ?, ?)",
+            [id, name, description, logo_url, affiliate_url, status || 'active']
+        );
+        res.json({ id, success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// PUT update company
+app.put('/api/admin/stack/companies/:id', async (req, res) => {
+    const { name, description, logo_url, affiliate_url, status } = req.body;
+    try {
+        await pool.query(
+            "UPDATE stack_companies SET name=?, description=?, logo_url=?, affiliate_url=?, status=? WHERE id=?",
+            [name, description, logo_url, affiliate_url, status, req.params.id]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// DELETE company
+app.delete('/api/admin/stack/companies/:id', async (req, res) => {
+    try {
+        await pool.query("DELETE FROM stack_companies WHERE id = ?", [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET specific company's coupons (for admin)
+app.get('/api/admin/stack/companies/:company_id/coupons', async (req, res) => {
+    try {
+        const [rows] = await pool.query("SELECT * FROM stack_coupons WHERE company_id = ? ORDER BY created_at DESC", [req.params.company_id]);
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST new coupon
+app.post('/api/admin/stack/coupons', async (req, res) => {
+    const { company_id, title, description, type, code, affiliate_url, status, expiry_date } = req.body;
+    try {
+        await pool.query(
+            "INSERT INTO stack_coupons (company_id, title, description, type, code, affiliate_url, status, expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            [company_id, title, description, type, code, affiliate_url, status || 'active', expiry_date || null]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// PUT update coupon
+app.put('/api/admin/stack/coupons/:id', async (req, res) => {
+    const { title, description, type, code, affiliate_url, status, expiry_date } = req.body;
+    try {
+        await pool.query(
+            "UPDATE stack_coupons SET title=?, description=?, type=?, code=?, affiliate_url=?, status=?, expiry_date=? WHERE id=?",
+            [title, description, type, code, affiliate_url, status, expiry_date || null, req.params.id]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// DELETE coupon
+app.delete('/api/admin/stack/coupons/:id', async (req, res) => {
+    try {
+        await pool.query("DELETE FROM stack_coupons WHERE id = ?", [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
  * LIVE AGENT / CHATBOT ENDPOINTS
  */
 

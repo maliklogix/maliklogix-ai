@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronUp, Tag, Handshake, Users, FileText, Link2, Video, Smartphone, Monitor, Mail, Mic } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import Logo from './Logo';
@@ -11,6 +11,7 @@ const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMobileSolutionsOpen, setIsMobileSolutionsOpen] = useState(false);
     const [isMobileLearnOpen, setIsMobileLearnOpen] = useState(false);
+    const [isMobileStackOpen, setIsMobileStackOpen] = useState(false);
     const navRef = useRef(null);
     const menuRef = useRef(null);
     const location = useLocation();
@@ -20,6 +21,7 @@ const Navbar = () => {
         setIsMenuOpen(false);
         setIsMobileSolutionsOpen(false);
         setIsMobileLearnOpen(false);
+        setIsMobileStackOpen(false);
     }, [location.pathname]);
 
     useEffect(() => {
@@ -77,6 +79,7 @@ const Navbar = () => {
                 { name: 'Legal Policy', href: '/legal' }
             ] 
         },
+        { name: 'Stack', isStackMenu: true },
         { name: 'Contact', href: '/contact' }
     ];
 
@@ -154,6 +157,68 @@ const Navbar = () => {
                                                             </div>
                                                         </div>
                                                     ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            }
+                            if (link.isStackMenu) {
+                                return (
+                                    <div key={link.name} className="group relative">
+                                        <button
+                                            className="text-sm font-mono transition-colors uppercase tracking-widest relative flex items-center gap-1 text-[var(--secondary)] hover:text-accent focus:outline-none"
+                                            aria-expanded="false"
+                                            aria-haspopup="true"
+                                        >
+                                            {link.name} <ChevronDown className="w-4 h-4" />
+                                            <span className="absolute -bottom-1 left-0 h-px bg-accent transition-all duration-300 w-0 group-hover:w-full" />
+                                        </button>
+                                        
+                                        <div 
+                                            className="absolute top-full left-1/2 -translate-x-1/2 mt-6 opacity-0 translate-y-[-6px] invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 ease-out z-[120] min-w-[480px]"
+                                            role="menu"
+                                        >
+                                            <div className="absolute top-[-24px] left-0 right-0 h-8 bg-transparent" />
+                                            
+                                            <div className="bg-[var(--card-bg)] border border-[var(--border)] border-t-[2px] border-t-accent shadow-[0_12px_40px_rgba(0,0,0,0.10)] rounded-b-2xl py-6 px-6 flex flex-col gap-4">
+                                                <div className="grid grid-cols-2 gap-8">
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-[12px] font-bold uppercase tracking-[1.5px] text-[var(--secondary)] px-4 mb-2">Partner With Us</span>
+                                                        {[
+                                                            { title: 'Coupons & Deals', icon: Tag, route: '/stack/coupons' },
+                                                            { title: 'Sponsorships', icon: Handshake, route: '#' },
+                                                            { title: 'Collaborations', icon: Users, route: '#' },
+                                                            { title: 'Resources', icon: FileText, route: '#' },
+                                                            { title: 'Affiliate Program', icon: Link2, route: '#' }
+                                                        ].map((item, j) => (
+                                                            <Link key={j} to={item.route} className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/10 transition-colors duration-200 outline-none focus-visible:bg-accent/10 focus-visible:ring-1 focus-visible:ring-accent" role="menuitem">
+                                                                <item.icon className="w-[18px] h-[18px] text-accent shrink-0" />
+                                                                <span className="text-[14px] font-medium text-[var(--foreground)] whitespace-nowrap">{item.title}</span>
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-[12px] font-bold uppercase tracking-[1.5px] text-[var(--secondary)] px-4 mb-2">Media & Reach</span>
+                                                        {[
+                                                            { title: 'YouTube Collaborations', icon: Video, route: '#' },
+                                                            { title: 'TikTok Features', icon: Smartphone, route: '#' },
+                                                            { title: 'Site Sponsorship', icon: Monitor, route: '#' },
+                                                            { title: 'Newsletter Features', icon: Mail, route: '#' },
+                                                            { title: 'Podcast & Interviews', icon: Mic, route: '#' }
+                                                        ].map((item, j) => (
+                                                            <Link key={j} to={item.route} className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent/10 transition-colors duration-200 outline-none focus-visible:bg-accent/10 focus-visible:ring-1 focus-visible:ring-accent" role="menuitem">
+                                                                <item.icon className="w-[18px] h-[18px] text-accent shrink-0" />
+                                                                <span className="text-[14px] font-medium text-[var(--foreground)] whitespace-nowrap">{item.title}</span>
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div className="border-t border-[var(--border)] pt-4 mt-2 flex items-center justify-between px-4">
+                                                    <span className="text-[14px] text-[var(--secondary)] font-medium">Want to partner with MalikLogix?</span>
+                                                    <Link to="/stack/media-kit" className="text-[14px] font-bold text-accent hover:text-accent/80 transition-colors flex items-center gap-1 group/btn">
+                                                        View Media Kit <span className="transition-transform group-hover/btn:translate-x-1" aria-hidden="true">&rarr;</span>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>
@@ -275,6 +340,63 @@ const Navbar = () => {
                                                     </div>
                                                 </div>
                                             ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }
+                        if (link.isStackMenu) {
+                            return (
+                                <div key={link.name} className="w-full flex flex-col items-center">
+                                    <button 
+                                        className={`menu-link flex items-center gap-2 text-3xl md:text-4xl font-display font-medium transition-colors ${isMobileStackOpen ? 'text-accent' : 'text-[var(--foreground)] hover:text-accent'}`}
+                                        onClick={() => setIsMobileStackOpen(!isMobileStackOpen)}
+                                    >
+                                        {link.name} 
+                                        {isMobileStackOpen ? <ChevronUp className="w-8 h-8" /> : <ChevronDown className="w-8 h-8" />}
+                                    </button>
+                                    
+                                    {/* Mobile Accordion Content */}
+                                    <div className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${isMobileStackOpen ? 'max-h-[1000px] opacity-100 mt-6' : 'max-h-0 opacity-0 mt-0'}`}>
+                                        <div className="flex flex-col gap-8 w-full items-center">
+                                            <div className="flex flex-col items-center w-full">
+                                                <div className="text-[var(--secondary)] font-bold uppercase tracking-[1.5px] text-xs mb-4">Partner With Us</div>
+                                                <div className="flex flex-col gap-3 w-full items-center">
+                                                    {[
+                                                        { title: 'Coupons & Deals', icon: Tag, route: '/stack/coupons' },
+                                                        { title: 'Sponsorships', icon: Handshake, route: '#' },
+                                                        { title: 'Collaborations', icon: Users, route: '#' },
+                                                        { title: 'Resources', icon: FileText, route: '#' },
+                                                        { title: 'Affiliate Program', icon: Link2, route: '#' }
+                                                    ].map((item, j) => (
+                                                        <Link key={j} to={item.route} className="flex items-center justify-center gap-3 w-full px-4 text-[var(--foreground)] hover:text-accent text-lg font-medium text-center">
+                                                            <item.icon className="w-5 h-5 text-accent shrink-0" />
+                                                            <span>{item.title}</span>
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col items-center w-full">
+                                                <div className="text-[var(--secondary)] font-bold uppercase tracking-[1.5px] text-xs mb-4">Media & Reach</div>
+                                                <div className="flex flex-col gap-3 w-full items-center">
+                                                    {[
+                                                        { title: 'YouTube Collaborations', icon: Video, route: '#' },
+                                                        { title: 'TikTok Features', icon: Smartphone, route: '#' },
+                                                        { title: 'Site Sponsorship', icon: Monitor, route: '#' },
+                                                        { title: 'Newsletter Features', icon: Mail, route: '#' },
+                                                        { title: 'Podcast & Interviews', icon: Mic, route: '#' }
+                                                    ].map((item, j) => (
+                                                        <Link key={j} to={item.route} className="flex items-center justify-center gap-3 w-full px-4 text-[var(--foreground)] hover:text-accent text-lg font-medium text-center">
+                                                            <item.icon className="w-5 h-5 text-accent shrink-0" />
+                                                            <span>{item.title}</span>
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col items-center mt-2 border-t border-[var(--border)] pt-6 w-full px-6">
+                                                <span className="text-sm text-[var(--secondary)] mb-3 text-center">Want to partner with MalikLogix?</span>
+                                                <Link to="/stack/media-kit" className="text-accent font-bold text-lg hover:text-accent/80 transition-colors">View Media Kit &rarr;</Link>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -16,7 +16,8 @@ import {
     Cpu,
     X,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    Ticket
 } from 'lucide-react';
 
 const navItems = [
@@ -28,6 +29,7 @@ const navItems = [
     { name: 'Leads', icon: Inbox, href: '/dash/leads' },
     { name: 'SEO Manager', icon: Search, href: '/dash/seo' },
     { name: 'Social Media', icon: Share2, href: '/dash/social-media' },
+    { name: 'Stack Coupons', icon: Ticket, href: '/dash/stack' },
     { name: 'OpenClaw Tools', icon: Brain, href: '/dash/tools' },
     { name: 'Media Library', icon: ImageIcon, href: '/dash/media' },
 ];
