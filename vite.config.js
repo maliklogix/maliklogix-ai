@@ -25,13 +25,16 @@ export default defineConfig({
                         if (id.includes('three') || id.includes('@react-three')) {
                             return 'vendor-three';
                         }
-                        if (id.includes('lucide-react')) {
-                            return 'vendor-ui';
-                        }
                         if (id.includes('gsap') || id.includes('lenis')) {
                             return 'vendor-animation';
                         }
-                        return 'vendor';
+                        if (id.includes('lucide-react')) {
+                            return 'vendor-ui';
+                        }
+                        if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+                            return 'vendor-core';
+                        }
+                        return 'vendor-utils';
                     }
                     if (id.includes('pages/dash') || id.includes('components/dash')) {
                         return 'dashboard';

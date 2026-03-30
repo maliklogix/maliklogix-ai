@@ -1317,6 +1317,14 @@ app.get('/{*path}', async (req, res) => {
             console.warn('CSS inlining failed, falling back to linked CSS:', cssErr.message);
         }
 
+        // --- Dynamic Preload Cleanup (Phase 5 JS Reduction) ---
+        // Strip out heavy preloads for public visitors to solve 'Unused JS' issues
+        const isDashPath = req.path.startsWith('/dash');
+        if (!isDashPath) {
+            const preloadRegex = /<link rel="modulepreload" [^>]*href="\/assets\/(dashboard|vendor-three|rich-text)[^>]*>/gi;
+            htmlBase = htmlBase.replace(preloadRegex, '<!-- Deferring Non-Critical Preload -->');
+        }
+
         // Fetch dynamic system header scripts
         const [rows] = await pool.query("SELECT config FROM site_scripts WHERE id = 1");
         if (rows.length > 0) {
