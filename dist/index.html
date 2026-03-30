@@ -14,28 +14,52 @@
     </noscript>
 
     <style>
-      :root { --accent: #06B6D4; }
-      .light { --background: #F8FAFC; --foreground: #0F172A; --secondary: #64748B; --card-bg: #FFFFFF; --border: #E2E8F0; color-scheme: light; }
-      .dark { --background: #080C10; --foreground: #F8FAFC; --secondary: #94A3B8; --card-bg: #111827; --border: #1E293B; color-scheme: dark; }
-      body { background-color: var(--background); color: var(--foreground); font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; }
-      #root { min-height: 100vh; }
+      :root { --accent: #06B6D4; --background: #080C10; --foreground: #F8FAFC; }
+      .light { --background: #F8FAFC; --foreground: #0F172A; }
+      .dark { --background: #080C10; --foreground: #F8FAFC; }
+      body { background-color: var(--background); color: var(--foreground); margin: 0; min-height: 100vh; font-family: 'Inter', system-ui, sans-serif; }
     </style>
-    <script type="module" crossorigin src="/assets/index-Bd5aRQ_o.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CZDgifwf.css">
-      <!-- ML_SCRIPTS_START -->
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2ZWKHZ2KQ4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Google Analytics & AdSense (Delayed Load) -->
+    <script>
+      (function() {
+        const loadScripts = () => {
+          setTimeout(() => {
+            // Google Analytics (GTM)
+            const gtm = document.createElement('script');
+            gtm.async = true;
+            gtm.src = 'https://www.googletagmanager.com/gtag/js?id=G-2ZWKHZ2KQ4';
+            document.head.appendChild(gtm);
 
-  gtag('config', 'G-2ZWKHZ2KQ4');
-</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9083888001969660"
-     crossorigin="anonymous"></script>
-<!-- ML_SCRIPTS_END -->
-</head>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-2ZWKHZ2KQ4');
+
+            // Google AdSense
+            const ads = document.createElement('script');
+            ads.async = true;
+            ads.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9083888001969660';
+            ads.crossOrigin = 'anonymous';
+            document.head.appendChild(ads);
+          }, 2000); // 2-second delay for optimal performance
+        };
+
+        if (document.readyState === 'complete') {
+          loadScripts();
+        } else {
+          window.addEventListener('load', loadScripts);
+        }
+      })();
+    </script>
+    
+    <!-- Dashboard Managed Scripts -->
+    <script type="module" crossorigin src="/assets/index-C1dSJWDT.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/vendor-9C8zAN7K.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-three-Z7hujZk4.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-animation-BlDhhss-.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-ui-MLDOKoZe.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-ZlYKG6Xg.css">
+  </head>
   <body class="bg-background text-foreground antialiased selection:bg-accent selection:text-background overflow-x-hidden">
     <div id="root"></div>
   </body>

@@ -455,10 +455,7 @@ const initScriptsDB = async () => {
         const adsenseScript = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9083888001969660"\n     crossorigin="anonymous"></script>`;
         
         const defaultConfig = {
-            scripts: [
-                { id: 'ga', name: 'Google Analytics', code: gaScript, enabled: true, injectOn: 'all', strategy: 'afterInteractive' },
-                { id: 'adsense', name: 'Google AdSense', code: adsenseScript, enabled: true, injectOn: 'all', strategy: 'afterInteractive' }
-            ],
+            scripts: [],
             deferAll: true,
             testMode: false,
             lastUpdated: new Date().toISOString()
@@ -997,6 +994,9 @@ const syncYoutubeVideos = async () => {
 
         // Update lastSync timestamp
         const now = Date.now().toString();
+        // Ensure tables exist before sync if not already checked
+        await initYoutubeDB();
+
         await pool.query("UPDATE youtube_settings SET value=? WHERE key_name='lastSync'", [now]);
         
         return { success: true, count: videos.length };
@@ -1299,6 +1299,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/{*path}', async (req, res) => {
     try {
         let htmlBase = await fs.promises.readFile(path.join(__dirname, 'dist', 'index.html'), 'utf8');
+
+        // Dynamic CSS Inlining to prevent render-blocking (Manual SSR-like optimization)
+        try {
+            const assetsDir = path.join(__dirname, 'dist', 'assets');
+            const files = await fs.promises.readdir(assetsDir);
+            const cssFile = files.find(f => f.endsWith('.css') && f.startsWith('index-'));
+            
+            if (cssFile) {
+                const cssPath = path.join(assetsDir, cssFile);
+                const cssContent = await fs.promises.readFile(cssPath, 'utf8');
+                // Replace the link tag with the actual style content
+                const linkTagRegex = new RegExp(`<link[^>]*href=["']\/assets\/${cssFile}["'][^>]*>`, 'i');
+                htmlBase = htmlBase.replace(linkTagRegex, `<style>\n${cssContent}\n</style>`);
+            }
+        } catch (cssErr) {
+            console.warn('CSS inlining failed, falling back to linked CSS:', cssErr.message);
+        }
 
         // Fetch dynamic system header scripts
         const [rows] = await pool.query("SELECT config FROM site_scripts WHERE id = 1");

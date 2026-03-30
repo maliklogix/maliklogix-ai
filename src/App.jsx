@@ -1,7 +1,4 @@
 import React, { useEffect, useRef, Suspense, lazy } from 'react';
-import Lenis from 'lenis';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Routes, Route, useLocation } from 'react-router-dom';
 
 // Components
@@ -13,7 +10,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Loader from './components/Loader';
 
 // Pages
-import Home from './pages/Home';
+const Home = lazy(() => import('./pages/Home'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Services = lazy(() => import('./pages/Services'));
 const Philosophy = lazy(() => import('./pages/Philosophy'));
@@ -60,8 +57,8 @@ const SubmitPage = lazy(() => import('./pages/tools/openclaw/submit'));
 
 // Dashboard
 const DashLogin = lazy(() => import('./pages/dash/DashLogin'));
-import AuthGuard from './components/dash/AuthGuard';
-import DashLayout from './components/dash/DashLayout';
+const AuthGuard = lazy(() => import('./components/dash/AuthGuard'));
+const DashLayout = lazy(() => import('./components/dash/DashLayout'));
 const DashOverview = lazy(() => import('./pages/dash/DashOverview'));
 const BlogList = lazy(() => import('./pages/dash/Blog/BlogList'));
 const BlogEditor = lazy(() => import('./pages/dash/Blog/BlogEditor'));
@@ -80,7 +77,7 @@ const ToolEditor = lazy(() => import('./pages/dash/Tools/ToolEditor'));
 const SocialMedia = lazy(() => import('./pages/dash/SocialMedia/SocialMedia'));
 const StackManager = lazy(() => import('./pages/dash/Stack/StackManager'));
 const YoutubeManager = lazy(() => import('./pages/dash/Youtube/YoutubeManager'));
-import { ToastProvider } from './components/dash/Toast';
+const ToastProvider = lazy(() => import('./components/dash/Toast').then(m => ({ default: m.ToastProvider })));
 
 // Register GSAP plugins (Plugin will be registered locally where needed for better code splitting)
 // gsap.registerPlugin(ScrollTrigger);
@@ -90,6 +87,7 @@ import { useTheme } from './context/ThemeContext';
 const App = () => {
     const { theme } = useTheme();
     const containerRef = useRef(null);
+    const lenisRef = useRef(null);
     const location = useLocation();
     const isDashboard = location.pathname.startsWith('/dash');
 
@@ -97,24 +95,56 @@ const App = () => {
         // Disable Lenis for Dashboard as it conflicts with the dashboard's internal scroll
         if (isDashboard) return;
 
-        // Initialize Lenis Smooth Scroll
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            orientation: 'vertical',
-            gestureOrientation: 'vertical',
-            smoothWheel: true,
-        });
+        // Defer Lenis and GSAP ticker initialization to minimize main-thread work at startup
+        const initAnimations = async () => {
+            try {
+                const [
+                    { default: Lenis },
+                    { gsap: gsapLib },
+                    { ScrollTrigger }
+                ] = await Promise.all([
+                    import('lenis'),
+                    import('gsap'),
+                    import('gsap/ScrollTrigger')
+                ]);
 
-        lenis.on('scroll', ScrollTrigger.update);
-        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-        gsap.ticker.lagSmoothing(0);
+                gsapLib.registerPlugin(ScrollTrigger);
+
+                const lenis = new Lenis({
+                    duration: 1.2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    orientation: 'vertical',
+                    gestureOrientation: 'vertical',
+                    smoothWheel: true,
+                });
+
+                lenisRef.current = lenis;
+
+                lenis.on('scroll', ScrollTrigger.update);
+                gsapLib.ticker.add((time) => { lenis.raf(time * 1000); });
+                gsapLib.ticker.lagSmoothing(0);
+
+                // Internal reference for ripple animation
+                window._gsap = gsapLib;
+            } catch (error) {
+                console.error("Failed to load animation libraries:", error);
+            }
+        };
+
+        if (window.requestIdleCallback) {
+            window.requestIdleCallback(() => initAnimations());
+        } else {
+            setTimeout(initAnimations, 1000);
+        }
 
         // Click Ripple Animation
         const onClick = (e) => {
             const ripple = document.createElement('div');
             ripple.className = 'fixed pointer-events-none rounded-full border-2 border-[#06B6D4] z-[9999]';
             document.body.appendChild(ripple);
+
+            if (!window._gsap) return;
+            const gsap = window._gsap;
 
             gsap.set(ripple, {
                 x: e.clientX,
@@ -139,9 +169,12 @@ const App = () => {
         window.addEventListener('click', onClick);
 
         return () => {
-            lenis.destroy();
+            if (lenisRef.current) {
+                lenisRef.current.destroy();
+                lenisRef.current = null;
+            }
             window.removeEventListener('click', onClick);
-            gsap.ticker.remove(lenis.raf);
+            // Global ticker clean up is handled by the instance destruction or stays for next mount
         };
     }, [location]);
 

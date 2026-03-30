@@ -52,19 +52,33 @@ const Hero = () => {
         return () => ctx.revert();
     }, []);
 
-    const rectRef = useRef(null);
-    const handleMagnetic = (e) => {
-        if (!rectRef.current) {
-            rectRef.current = e.currentTarget.getBoundingClientRect();
+    const xTo = useRef(null);
+    const yTo = useRef(null);
+    const boundsRef = useRef(null);
+
+    const initMagnetic = (e) => {
+        boundsRef.current = e.currentTarget.getBoundingClientRect();
+        if (!xTo.current || !yTo.current) {
+            xTo.current = gsap.quickTo(e.currentTarget, "x", { duration: 0.4, ease: "power2.out" });
+            yTo.current = gsap.quickTo(e.currentTarget, "y", { duration: 0.4, ease: "power2.out" });
         }
-        const rect = rectRef.current;
+    };
+
+    const handleMagnetic = (e) => {
+        if (!boundsRef.current) return;
+        const rect = boundsRef.current;
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
-        gsap.to(e.currentTarget, { x: x * 0.3, y: y * 0.3, duration: 0.4, ease: 'power2.out' });
+        xTo.current(x * 0.3);
+        yTo.current(y * 0.3);
     };
 
     const resetMagnetic = (e) => {
-        rectRef.current = null;
+        boundsRef.current = null;
+        if (xTo.current && yTo.current) {
+            xTo.current(0);
+            yTo.current(0);
+        }
         gsap.to(e.currentTarget, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
     };
 
@@ -95,6 +109,7 @@ const Hero = () => {
                     <div ref={ctaRef} className="flex flex-wrap gap-6 items-center">
                         <Link
                             to="/contact"
+                            onMouseEnter={initMagnetic}
                             onMouseMove={handleMagnetic}
                             onMouseLeave={resetMagnetic}
                             className="magnetic-btn px-5 py-3 md:px-8 md:py-4 bg-accent text-[var(--background)] text-xs sm:text-sm md:text-base font-bold rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--background)] leading-tight"
@@ -105,6 +120,7 @@ const Hero = () => {
 
                         <Link
                             to="/philosophy"
+                            onMouseEnter={initMagnetic}
                             onMouseMove={handleMagnetic}
                             onMouseLeave={resetMagnetic}
                             className="magnetic-btn px-6 py-3 md:px-8 md:py-4 bg-[var(--foreground)]/[0.05] border border-[var(--border)] text-[var(--foreground)] text-xs sm:text-sm md:text-base font-bold rounded-lg hover:bg-[var(--foreground)]/[0.1] transition-all shadow-lg whitespace-nowrap flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--foreground)]/20 focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--background)]"
