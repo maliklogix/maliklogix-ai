@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, Suspense, lazy } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,80 +8,79 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
-import Chatbot from './components/Chatbot';
+const Chatbot = lazy(() => import('./components/Chatbot'));
 import ScrollToTop from './components/ScrollToTop';
-import ScriptInjector from './components/ScriptInjector';
+const ScriptInjector = lazy(() => import('./components/ScriptInjector'));
+import Loader from './components/Loader';
 
 // Pages
 import Home from './pages/Home';
-import Contact from './pages/Contact';
-import Services from './pages/Services';
-import Philosophy from './pages/Philosophy';
-import Blog from './pages/Blog';
-import BlogDetail from './pages/BlogDetail';
-import Founder from './pages/Founder';
-import About from './pages/About';
-import Legal from './pages/Legal';
-import Docs from './pages/Docs';
-import NotFound from './pages/NotFound';
-import CouponsPage from './pages/stack/CouponsPage';
-import YoutubePage from './pages/youtube/YoutubePage';
-import InstagramPage from './pages/social/InstagramPage';
-import GithubPage from './pages/social/GithubPage';
-import XPage from './pages/social/XPage';
-import WhatsappPage from './pages/social/WhatsappPage';
-
-
+const Contact = lazy(() => import('./pages/Contact'));
+const Services = lazy(() => import('./pages/Services'));
+const Philosophy = lazy(() => import('./pages/Philosophy'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogDetail = lazy(() => import('./pages/BlogDetail'));
+const Founder = lazy(() => import('./pages/Founder'));
+const About = lazy(() => import('./pages/About'));
+const Legal = lazy(() => import('./pages/Legal'));
+const Docs = lazy(() => import('./pages/Docs'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const CouponsPage = lazy(() => import('./pages/stack/CouponsPage'));
+const YoutubePage = lazy(() => import('./pages/youtube/YoutubePage'));
+const InstagramPage = lazy(() => import('./pages/social/InstagramPage'));
+const GithubPage = lazy(() => import('./pages/social/GithubPage'));
+const XPage = lazy(() => import('./pages/social/XPage'));
+const WhatsappPage = lazy(() => import('./pages/social/WhatsappPage'));
 
 // Service Pages
-import AiCampaignManagementPage from './pages/services/ai-campaign-management';
-import LeadGenerationAiPage from './pages/services/lead-generation-ai';
-import ConversionOptimizationPage from './pages/services/conversion-optimization';
-import AiAdTargetingPage from './pages/services/ai-ad-targeting';
-import FunnelAutomationPage from './pages/services/funnel-automation';
-import EmailMarketingAiPage from './pages/services/email-marketing-ai';
-import SeoStrategyPage from './pages/services/seo-strategy';
-import GeoAiSearchPage from './pages/services/geo-ai-search';
-import AiContentCreationPage from './pages/services/ai-content-creation';
-import BlogWritingPage from './pages/services/blog-writing';
-import KeywordClusteringPage from './pages/services/keyword-clustering';
-import ContentTrackingPage from './pages/services/content-tracking';
-import N8nAutomationPage from './pages/services/n8n-automation';
-import MakeIntegrationsPage from './pages/services/make-integrations';
-import AiChatbotsPage from './pages/services/ai-chatbots';
-import ShopifyAiPage from './pages/services/shopify-ai';
-import CrmAutomationPage from './pages/services/crm-automation';
-import ApiDashboardsPage from './pages/services/api-dashboards';
+const AiCampaignManagementPage = lazy(() => import('./pages/services/ai-campaign-management'));
+const LeadGenerationAiPage = lazy(() => import('./pages/services/lead-generation-ai'));
+const ConversionOptimizationPage = lazy(() => import('./pages/services/conversion-optimization'));
+const AiAdTargetingPage = lazy(() => import('./pages/services/ai-ad-targeting'));
+const FunnelAutomationPage = lazy(() => import('./pages/services/funnel-automation'));
+const EmailMarketingAiPage = lazy(() => import('./pages/services/email-marketing-ai'));
+const SeoStrategyPage = lazy(() => import('./pages/services/seo-strategy'));
+const GeoAiSearchPage = lazy(() => import('./pages/services/geo-ai-search'));
+const AiContentCreationPage = lazy(() => import('./pages/services/ai-content-creation'));
+const BlogWritingPage = lazy(() => import('./pages/services/blog-writing'));
+const KeywordClusteringPage = lazy(() => import('./pages/services/keyword-clustering'));
+const ContentTrackingPage = lazy(() => import('./pages/services/content-tracking'));
+const N8nAutomationPage = lazy(() => import('./pages/services/n8n-automation'));
+const MakeIntegrationsPage = lazy(() => import('./pages/services/make-integrations'));
+const AiChatbotsPage = lazy(() => import('./pages/services/ai-chatbots'));
+const ShopifyAiPage = lazy(() => import('./pages/services/shopify-ai'));
+const CrmAutomationPage = lazy(() => import('./pages/services/crm-automation'));
+const ApiDashboardsPage = lazy(() => import('./pages/services/api-dashboards'));
 
 // Tools Pages
-import SkillhubPage from './pages/tools/openclaw/skillhub';
-import AutomationPage from './pages/tools/openclaw/automation';
-import AiSkillsPage from './pages/tools/ai-skills';
-import ExtensionsPage from './pages/tools/openclaw/extensions';
-import SubmitPage from './pages/tools/openclaw/submit';
+const SkillhubPage = lazy(() => import('./pages/tools/openclaw/skillhub'));
+const AutomationPage = lazy(() => import('./pages/tools/openclaw/automation'));
+const AiSkillsPage = lazy(() => import('./pages/tools/ai-skills'));
+const ExtensionsPage = lazy(() => import('./pages/tools/openclaw/extensions'));
+const SubmitPage = lazy(() => import('./pages/tools/openclaw/submit'));
 
 // Dashboard
-import DashLogin from './pages/dash/DashLogin';
+const DashLogin = lazy(() => import('./pages/dash/DashLogin'));
 import AuthGuard from './components/dash/AuthGuard';
 import DashLayout from './components/dash/DashLayout';
-import DashOverview from './pages/dash/DashOverview';
-import BlogList from './pages/dash/Blog/BlogList';
-import BlogEditor from './pages/dash/Blog/BlogEditor';
-import ServiceList from './pages/dash/Services/ServiceList';
-import ServiceEditor from './pages/dash/Services/ServiceEditor';
-import LeadList from './pages/dash/Leads/LeadList';
-import LeadDetail from './pages/dash/Leads/LeadDetail';
-import NewsletterList from './pages/dash/Newsletter/NewsletterList';
-import CampaignComposer from './pages/dash/Newsletter/CampaignComposer';
-import SeoManager from './pages/dash/SeoManager';
-import SettingsManager from './pages/dash/SettingsManager';
-import MediaManager from './pages/dash/Media/MediaManager';
-import LiveAgent from './pages/dash/LiveAgent/LiveAgent';
-import ToolsManager from './pages/dash/Tools/ToolsManager';
-import ToolEditor from './pages/dash/Tools/ToolEditor';
-import SocialMedia from './pages/dash/SocialMedia/SocialMedia';
-import StackManager from './pages/dash/Stack/StackManager';
-import YoutubeManager from './pages/dash/Youtube/YoutubeManager';
+const DashOverview = lazy(() => import('./pages/dash/DashOverview'));
+const BlogList = lazy(() => import('./pages/dash/Blog/BlogList'));
+const BlogEditor = lazy(() => import('./pages/dash/Blog/BlogEditor'));
+const ServiceList = lazy(() => import('./pages/dash/Services/ServiceList'));
+const ServiceEditor = lazy(() => import('./pages/dash/Services/ServiceEditor'));
+const LeadList = lazy(() => import('./pages/dash/Leads/LeadList'));
+const LeadDetail = lazy(() => import('./pages/dash/Leads/LeadDetail'));
+const NewsletterList = lazy(() => import('./pages/dash/Newsletter/NewsletterList'));
+const CampaignComposer = lazy(() => import('./pages/dash/Newsletter/CampaignComposer'));
+const SeoManager = lazy(() => import('./pages/dash/SeoManager'));
+const SettingsManager = lazy(() => import('./pages/dash/SettingsManager'));
+const MediaManager = lazy(() => import('./pages/dash/Media/MediaManager'));
+const LiveAgent = lazy(() => import('./pages/dash/LiveAgent/LiveAgent'));
+const ToolsManager = lazy(() => import('./pages/dash/Tools/ToolsManager'));
+const ToolEditor = lazy(() => import('./pages/dash/Tools/ToolEditor'));
+const SocialMedia = lazy(() => import('./pages/dash/SocialMedia/SocialMedia'));
+const StackManager = lazy(() => import('./pages/dash/Stack/StackManager'));
+const YoutubeManager = lazy(() => import('./pages/dash/Youtube/YoutubeManager'));
 import { ToastProvider } from './components/dash/Toast';
 
 // Register GSAP plugins
@@ -156,8 +155,9 @@ const App = () => {
 
             <main className="flex-grow relative z-10">
                 <ToastProvider>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
+                    <Suspense fallback={<Loader />}>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/services" element={<Services />} />
                         <Route path="/services/ai-campaign-management" element={<AiCampaignManagementPage />} />
@@ -229,6 +229,7 @@ const App = () => {
                             </Route>
                         </Route>
                     </Routes>
+                    </Suspense>
                 </ToastProvider>
             </main>
 
@@ -236,8 +237,10 @@ const App = () => {
                 <>
                     <Footer />
                     <BackToTop />
-                    <Chatbot />
-                    <ScriptInjector />
+                    <Suspense fallback={null}>
+                        <Chatbot />
+                        <ScriptInjector />
+                    </Suspense>
                 </>
             )}
         </div>

@@ -280,18 +280,13 @@ const CircuitDiagram = ({ className = '' }) => {
                     </g>
                 ))}
 
-                {/* ── Grid dots (PCB texture) ── */}
-                {Array.from({ length: 24 }, (_, col) =>
-                    Array.from({ length: 18 }, (_, row) => (
-                        <circle key={`${col}-${row}`}
-                            cx={20 + col * 21}
-                            cy={20 + row * 21}
-                            r="0.8"
-                            fill="var(--foreground)"
-                            opacity="0.04"
-                        />
-                    ))
-                )}
+                {/* ── Grid dots (PCB texture) replacing 432 circles with 1 pattern ── */}
+                <defs>
+                    <pattern id="gridPattern" width="21" height="21" patternUnits="userSpaceOnUse">
+                        <circle cx="20" cy="20" r="0.8" fill="var(--foreground)" opacity="0.04" />
+                    </pattern>
+                </defs>
+                <rect x="0" y="0" width="520" height="400" fill="url(#gridPattern)" />
 
                 {/* ── Corner markers ── */}
                 {[

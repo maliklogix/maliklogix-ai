@@ -313,6 +313,7 @@ const Navbar = () => {
                         {/* Mobile Toggle */}
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            aria-label="Toggle mobile menu"
                             className="md:hidden w-10 h-10 flex items-center justify-center text-[var(--foreground)]"
                         >
                             {isMenuOpen ? <X /> : <Menu />}
@@ -329,6 +330,7 @@ const Navbar = () => {
             >
                 <button
                     onClick={() => setIsMenuOpen(false)}
+                    aria-label="Close mobile menu"
                     className="absolute top-10 right-10 text-[var(--secondary)] hover:text-accent transition-colors"
                 >
                     <X size={32} />

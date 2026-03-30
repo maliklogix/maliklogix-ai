@@ -31,7 +31,7 @@ const Footer = () => {
                     </div>
 
                     <div className="col-span-1">
-                        <h4 className="text-sm font-mono text-accent uppercase tracking-widest mb-6">Solutions</h4>
+                        <h2 className="text-sm font-mono text-accent uppercase tracking-widest mb-6">Solutions</h2>
                         <ul className="space-y-3 text-[var(--secondary)] font-body text-sm">
                             <li><Link to="/services" className="hover:text-accent transition-colors block">All Services</Link></li>
                             <li><Link to="/services/shopify-ai" className="hover:text-accent transition-colors block">Shopify AI</Link></li>
@@ -42,7 +42,7 @@ const Footer = () => {
                     </div>
 
                     <div className="col-span-1">
-                        <h4 className="text-sm font-mono text-accent uppercase tracking-widest mb-6">Insights</h4>
+                        <h2 className="text-sm font-mono text-accent uppercase tracking-widest mb-6">Insights</h2>
                         <ul className="space-y-3 text-[var(--secondary)] font-body text-sm">
                             <li><Link to="/about" className="hover:text-accent transition-colors block">About Agency</Link></li>
                             <li><Link to="/founder" className="hover:text-accent transition-colors block">The Founder</Link></li>
@@ -53,7 +53,7 @@ const Footer = () => {
                     </div>
 
                     <div className="col-span-1">
-                        <h4 className="text-sm font-mono text-accent uppercase tracking-widest mb-6">Hub</h4>
+                        <h2 className="text-sm font-mono text-accent uppercase tracking-widest mb-6">Hub</h2>
                         <ul className="space-y-3 text-[var(--secondary)] font-body text-sm">
                             <li><Link to="/contact" className="hover:text-accent transition-colors block">Contact Us</Link></li>
                             <li><Link to="/stack/coupons" className="hover:text-accent transition-colors block">Stack & Deals</Link></li>

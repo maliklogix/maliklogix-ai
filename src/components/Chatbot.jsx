@@ -201,7 +201,7 @@ const Chatbot = () => {
                                     </div>
                                 </div>
                             </div>
-                            <button onClick={() => setIsOpen(false)} className="text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors p-2 hover:bg-[var(--foreground)]/[0.05] rounded-full">
+                            <button onClick={() => setIsOpen(false)} aria-label="Close chatbot" className="text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors p-2 hover:bg-[var(--foreground)]/[0.05] rounded-full">
                                 <X size={20} />
                             </button>
                         </div>
@@ -323,6 +323,7 @@ const Chatbot = () => {
                 whileHover={{ scale: 1.1, y: -5 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsOpen(!isOpen)}
+                aria-label="Toggle chatbot dialog"
                 className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 relative z-10 ${isOpen ? 'bg-[var(--foreground)] text-[var(--background)] rotate-180' : 'bg-accent text-white'
                     }`}
             >
