@@ -1251,9 +1251,50 @@ app.listen(port, () => {
 
 // ─── Serve React SPA (Production) ────────────────────────────────────────────
 // This must come AFTER all API routes.
+
+// Sitemap.xml Generator
+app.get('/sitemap.xml', async (req, res) => {
+    const baseUrl = 'https://maliklogix.com';
+    try {
+        const [posts] = await pool.query("SELECT slug, updated_at FROM posts WHERE status = 'published'");
+        const [services] = await pool.query("SELECT slug FROM services WHERE status = 'active'");
+
+        const staticRoutes = [
+            '', '/about', '/contact', '/philosophy', '/blog', '/founder', '/legal', '/docs', 
+            '/services', '/stack/coupons', '/youtube', '/instagram', '/github'
+        ];
+
+        let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+        // Add static routes
+        staticRoutes.forEach(route => {
+            xml += `  <url>\n    <loc>${baseUrl}${route}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${route === '' ? '1.0' : '0.8'}</priority>\n  </url>\n`;
+        });
+
+        // Add services
+        services.forEach(s => {
+            xml += `  <url>\n    <loc>${baseUrl}/services/${s.slug}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+        });
+
+        // Add blog posts
+        posts.forEach(p => {
+            const date = p.updated_at ? new Date(p.updated_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+            xml += `  <url>\n    <loc>${baseUrl}/blog/${p.slug}</loc>\n    <lastmod>${date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+        });
+
+        xml += `</urlset>`;
+        res.header('Content-Type', 'application/xml');
+        res.send(xml);
+    } catch (error) {
+        console.error('Error generating sitemap:', error);
+        res.status(500).send('Error generating sitemap');
+    }
+});
+
 // When deployed, Express serves the built Vite output (dist/) for every
 // non-API request. React Router then handles /dash, /contact, etc. client-side.
 app.use(express.static(path.join(__dirname, 'dist'), { index: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/{*path}', async (req, res) => {
     try {
@@ -1291,6 +1332,29 @@ app.get('/{*path}', async (req, res) => {
                 }
             }
         }
+        // Inject JSON-LD Schema
+        const schema = {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "MalikLogix",
+            "url": "https://maliklogix.com",
+            "logo": "https://maliklogix.com/favicon.svg",
+            "description": "Premium AI digital marketing and automation agency specializing in SEO, SGE, and business workflow optimization.",
+            "sameAs": [
+                "https://x.com/maliklogix",
+                "https://github.com/maliklogix",
+                "https://maliklogix.com/youtube",
+                "https://maliklogix.com/instagram"
+            ],
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer support",
+                "url": "https://maliklogix.com/contact"
+            }
+        };
+        const schemaHtml = `\n<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n</script>\n`;
+        htmlBase = htmlBase.replace('</head>', `${schemaHtml}</head>`);
+
         res.send(htmlBase);
     } catch (e) {
         console.error('Error during SSR script injection:', e);
