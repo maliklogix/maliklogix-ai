@@ -10,7 +10,6 @@ import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
 const Chatbot = lazy(() => import('./components/Chatbot'));
 import ScrollToTop from './components/ScrollToTop';
-const ScriptInjector = lazy(() => import('./components/ScriptInjector'));
 import Loader from './components/Loader';
 
 // Pages
@@ -239,7 +238,6 @@ const App = () => {
                     <BackToTop />
                     <Suspense fallback={null}>
                         <Chatbot />
-                        <ScriptInjector />
                     </Suspense>
                 </>
             )}

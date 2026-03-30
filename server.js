@@ -407,15 +407,36 @@ app.put('/api/admin/tools/:id', async (req, res) => {
  * HEADER SCRIPTS ENDPOINTS
  */
 
-const SCRIPTS_CONFIG_PATH = path.join(__dirname, 'public/scripts-config.json');
+const initScriptsDB = async () => {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS site_scripts (
+                id INT PRIMARY KEY DEFAULT 1,
+                config JSON NOT NULL
+            )
+        `);
+        // Insert default row if not exists
+        await pool.query(`
+            INSERT IGNORE INTO site_scripts (id, config) 
+            VALUES (1, '{"scripts": [], "deferAll": true, "testMode": false}')
+        `);
+        console.log('Scripts DB initialized successfully');
+    } catch (err) {
+        console.error('Error initializing Scripts DB:', err);
+    }
+};
+initScriptsDB();
 
 app.get('/api/admin/scripts', async (req, res) => {
     try {
-        const data = await fs.promises.readFile(SCRIPTS_CONFIG_PATH, 'utf8');
-        res.json(JSON.parse(data));
+        const [rows] = await pool.query("SELECT config FROM site_scripts WHERE id = 1");
+        if (rows.length > 0) {
+            res.json(typeof rows[0].config === 'string' ? JSON.parse(rows[0].config) : rows[0].config);
+        } else {
+            res.json({ scripts: [], deferAll: true, testMode: false, lastUpdated: new Date().toISOString() });
+        }
     } catch (error) {
-        // If file doesn't exist, return default
-        res.json({ scripts: [], deferAll: true, testMode: false, lastUpdated: new Date().toISOString() });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -425,7 +446,11 @@ app.post('/api/admin/scripts', async (req, res) => {
             ...req.body,
             lastUpdated: new Date().toISOString()
         };
-        await fs.promises.writeFile(SCRIPTS_CONFIG_PATH, JSON.stringify(config, null, 2));
+        const configStr = JSON.stringify(config);
+        await pool.query(
+            "INSERT INTO site_scripts (id, config) VALUES (1, ?) ON DUPLICATE KEY UPDATE config = ?",
+            [configStr, configStr]
+        );
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -1168,11 +1193,47 @@ app.listen(port, () => {
 // This must come AFTER all API routes.
 // When deployed, Express serves the built Vite output (dist/) for every
 // non-API request. React Router then handles /dash, /contact, etc. client-side.
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist'), { index: false }));
 
+app.get('/{*path}', async (req, res) => {
+    try {
+        let htmlBase = await fs.promises.readFile(path.join(__dirname, 'dist', 'index.html'), 'utf8');
 
+        // Fetch dynamic system header scripts
+        const [rows] = await pool.query("SELECT config FROM site_scripts WHERE id = 1");
+        if (rows.length > 0) {
+            const config = typeof rows[0].config === 'string' ? JSON.parse(rows[0].config) : rows[0].config;
+            
+            // Handle active test mode checking preview URL
+            const isPreview = req.query.ml_preview === '1';
+            const shouldInject = !(config.testMode && !isPreview);
 
-app.get('/{*path}', (req, res) => {
+            if (shouldInject && config.scripts && config.scripts.length > 0) {
+                // Determine normalized current path
+                const pathStr = req.path;
+                
+                const scriptsHtml = config.scripts
+                    .filter(script => {
+                        if (!script.enabled) return false;
+                        if (script.injectOn === 'homepage') return pathStr === '/';
+                        return true; // injectOn === 'all'
+                    })
+                    .map(s => {
+                        // If they are just code snippets without <script> tag, we wrap it safely
+                        if (!s.code.includes('<script') && !s.code.includes('<meta')) {
+                            return `\n<script${config.deferAll ? ' defer' : ''}>\n${s.code}\n</script>\n`;
+                        }
+                        return `\n${s.code}\n`;
+                    }).join('');
 
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+                if (scriptsHtml) {
+                    htmlBase = htmlBase.replace('</head>', `${scriptsHtml}\n</head>`);
+                }
+            }
+        }
+        res.send(htmlBase);
+    } catch (e) {
+        console.error('Error during SSR script injection:', e);
+        res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    }
 });
