@@ -32,18 +32,18 @@ const Hero = () => {
                 y: 100,
                 rotateX: -45,
                 opacity: 0,
-                duration: 1.2,
+                duration: 0.8,
                 stagger: 0.1,
                 ease: 'power4.out',
-                delay: 0.2
+                delay: 0.1
             });
 
             gsap.from([subTitleRef.current, ctaRef.current], {
                 opacity: 0,
                 y: 20,
-                duration: 1,
-                stagger: 0.2,
-                delay: 0.8,
+                duration: 0.8,
+                stagger: 0.1,
+                delay: 0.3,
                 ease: 'power3.out',
             });
 

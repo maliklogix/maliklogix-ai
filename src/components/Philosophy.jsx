@@ -17,7 +17,7 @@ const Philosophy = () => {
                     </div>
 
                     <div className="mt-12 flex items-center gap-6 p-6 border border-accent/10 bg-accent/5 rounded-2xl backdrop-blur-sm">
-                        <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-white text-2xl font-display font-medium shadow-lg shadow-accent/20">
+                        <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-[var(--background)] text-2xl font-display font-medium shadow-lg shadow-accent/20">
                             ML
                         </div>
                         <div>
