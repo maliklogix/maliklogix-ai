@@ -31,10 +31,7 @@ export default defineConfig({
                         if (id.includes('lucide-react')) {
                             return 'vendor-ui';
                         }
-                        if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
-                            return 'vendor-core';
-                        }
-                        return 'vendor-utils';
+                        return 'vendor';
                     }
                     if (id.includes('pages/dash') || id.includes('components/dash')) {
                         return 'dashboard';
