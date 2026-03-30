@@ -1300,7 +1300,7 @@ app.get('/{*path}', async (req, res) => {
     try {
         let htmlBase = await fs.promises.readFile(path.join(__dirname, 'dist', 'index.html'), 'utf8');
 
-        // Dynamic CSS Inlining to prevent render-blocking (Manual SSR-like optimization)
+        // --- Dynamic CSS Inlining (Safe Fallback) ---
         try {
             const assetsDir = path.join(__dirname, 'dist', 'assets');
             const files = await fs.promises.readdir(assetsDir);
@@ -1309,53 +1309,56 @@ app.get('/{*path}', async (req, res) => {
             if (cssFile) {
                 const cssPath = path.join(assetsDir, cssFile);
                 const cssContent = await fs.promises.readFile(cssPath, 'utf8');
-                // Replace the link tag with the actual style content
+                // Use a more specific regex that matches the entire link tag precisely
                 const linkTagRegex = new RegExp(`<link[^>]*href=["']\/assets\/${cssFile}["'][^>]*>`, 'i');
-                htmlBase = htmlBase.replace(linkTagRegex, `<style>\n${cssContent}\n</style>`);
-            }
-        } catch (cssErr) {
-            console.warn('CSS inlining failed, falling back to linked CSS:', cssErr.message);
-        }
-
-        // --- Dynamic Preload Cleanup (Phase 5 JS Reduction) ---
-        // Strip out heavy preloads for public visitors to solve 'Unused JS' issues
-        const isDashPath = req.path.startsWith('/dash');
-        if (!isDashPath) {
-            const preloadRegex = /<link rel="modulepreload" [^>]*href="\/assets\/(dashboard|vendor-three|rich-text)[^>]*>/gi;
-            htmlBase = htmlBase.replace(preloadRegex, '<!-- Deferring Non-Critical Preload -->');
-        }
-
-        // Fetch dynamic system header scripts
-        const [rows] = await pool.query("SELECT config FROM site_scripts WHERE id = 1");
-        if (rows.length > 0) {
-            const config = typeof rows[0].config === 'string' ? JSON.parse(rows[0].config) : rows[0].config;
-            
-            // Handle active test mode checking preview URL
-            const isPreview = req.query.ml_preview === '1';
-            const shouldInject = !(config.testMode && !isPreview);
-
-            if (shouldInject && config.scripts && config.scripts.length > 0) {
-                // Determine normalized current path
-                const pathStr = req.path;
-                
-                const scriptsHtml = config.scripts
-                    .filter(script => {
-                        if (!script.enabled) return false;
-                        if (script.injectOn === 'homepage') return pathStr === '/';
-                        return true; // injectOn === 'all'
-                    })
-                    .map(s => {
-                        // If they are just code snippets without <script> tag, we wrap it safely
-                        if (!s.code.includes('<script') && !s.code.includes('<meta')) {
-                            return `\n<script${config.deferAll ? ' defer' : ''}>\n${s.code}\n</script>\n`;
-                        }
-                        return `\n${s.code}\n`;
-                    }).join('');
-
-                if (scriptsHtml) {
-                    htmlBase = htmlBase.replace('</head>', `${scriptsHtml}\n</head>`);
+                if (linkTagRegex.test(htmlBase)) {
+                    htmlBase = htmlBase.replace(linkTagRegex, `<style>\n${cssContent}\n</style>`);
                 }
             }
+        } catch (cssErr) {
+            console.warn('CSS inlining alert, using linked CSS:', cssErr.message);
+        }
+
+        // --- Dynamic Preload Cleanup (Safe Boundary) ---
+        const isDashPath = req.path.startsWith('/dash');
+        if (!isDashPath) {
+            // Only strip preloads that match exactly the non-critical chunks
+            const preloadRegex = /<link rel="modulepreload" [^>]*href="\/assets\/(dashboard|vendor-three|rich-text)-[^>]*>/gi;
+            htmlBase = htmlBase.replace(preloadRegex, '');
+        }
+
+        // --- Stabilized Script Injection ---
+        try {
+            const [rows] = await pool.query("SELECT config FROM site_scripts WHERE id = 1");
+            if (rows.length > 0) {
+                const config = typeof rows[0].config === 'string' ? JSON.parse(rows[0].config) : rows[0].config;
+                const isPreview = req.query.ml_preview === '1';
+                const shouldInject = !(config.testMode && !isPreview);
+
+                if (shouldInject && config.scripts && config.scripts.length > 0) {
+                    const pathStr = req.path;
+                    const scriptsHtml = config.scripts
+                        .filter(script => {
+                            if (!script.enabled) return false;
+                            if (script.injectOn === 'homepage') return pathStr === '/';
+                            return true;
+                        })
+                        .map(s => {
+                            let code = s.code.trim();
+                            // If it's a snippet without tags, wrap it properly
+                            if (!code.startsWith('<script') && !code.startsWith('<meta') && !code.startsWith('<!--')) {
+                                return `\n<script${config.deferAll ? ' defer' : ''}>\n${code}\n</script>\n`;
+                            }
+                            return `\n${code}\n`;
+                        }).join('');
+
+                    if (scriptsHtml) {
+                        htmlBase = htmlBase.replace('</head>', `${scriptsHtml}\n</head>`);
+                    }
+                }
+            }
+        } catch (scriptErr) {
+            console.warn('Script injection failed:', scriptErr.message);
         }
         // Inject JSON-LD Schema
         const schema = {
