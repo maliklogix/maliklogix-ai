@@ -407,6 +407,42 @@ app.put('/api/admin/tools/:id', async (req, res) => {
  * HEADER SCRIPTS ENDPOINTS
  */
 
+const injectScriptsIntoStaticHtml = async (config) => {
+    try {
+        const indexPath = path.join(__dirname, 'dist', 'index.html');
+        if (!fs.existsSync(indexPath)) return;
+
+        let html = await fs.promises.readFile(indexPath, 'utf8');
+
+        // Clean previous script injections cleanly
+        const startTag = '<!-- ML_SCRIPTS_START -->';
+        const endTag = '<!-- ML_SCRIPTS_END -->';
+        const regex = new RegExp(`${startTag}[\\s\\S]*?${endTag}\\n?`, 'g');
+        html = html.replace(regex, '');
+
+        if (!config.testMode && config.scripts && config.scripts.length > 0) {
+            const scriptsHtml = config.scripts
+                .filter(script => script.enabled) // Global static injection natively required
+                .map(s => {
+                    if (!s.code.includes('<script') && !s.code.includes('<meta')) {
+                        return `<script${config.deferAll ? ' defer' : ''}>\n${s.code}\n</script>`;
+                    }
+                    return s.code;
+                }).join('\n');
+
+            if (scriptsHtml) {
+                const injection = `${startTag}\n${scriptsHtml}\n${endTag}\n`;
+                html = html.replace('</head>', `${injection}</head>`);
+            }
+        }
+
+        await fs.promises.writeFile(indexPath, html, 'utf8');
+        console.log('Successfully synced header scripts to static index.html');
+    } catch (e) {
+        console.error('Failed to update static HTML:', e);
+    }
+};
+
 const initScriptsDB = async () => {
     try {
         await pool.query(`
@@ -421,6 +457,13 @@ const initScriptsDB = async () => {
             VALUES (1, '{"scripts": [], "deferAll": true, "testMode": false}')
         `);
         console.log('Scripts DB initialized successfully');
+
+        // Sync static HTML on boot for persistence
+        const [rows] = await pool.query("SELECT config FROM site_scripts WHERE id = 1");
+        if (rows.length > 0) {
+            const config = typeof rows[0].config === 'string' ? JSON.parse(rows[0].config) : rows[0].config;
+            await injectScriptsIntoStaticHtml(config);
+        }
     } catch (err) {
         console.error('Error initializing Scripts DB:', err);
     }
@@ -451,6 +494,10 @@ app.post('/api/admin/scripts', async (req, res) => {
             "INSERT INTO site_scripts (id, config) VALUES (1, ?) ON DUPLICATE KEY UPDATE config = ?",
             [configStr, configStr]
         );
+        
+        // Push updates dynamically to static HTML 
+        await injectScriptsIntoStaticHtml(config);
+        
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: error.message });
