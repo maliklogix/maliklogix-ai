@@ -451,11 +451,24 @@ const initScriptsDB = async () => {
                 config JSON NOT NULL
             )
         `);
+        const gaScript = `<!-- Google tag (gtag.js) -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=G-2ZWKHZ2KQ4"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'G-2ZWKHZ2KQ4');\n</script>`;
+        const adsenseScript = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9083888001969660"\n     crossorigin="anonymous"></script>`;
+        
+        const defaultConfig = {
+            scripts: [
+                { id: 'ga', name: 'Google Analytics', code: gaScript, enabled: true, injectOn: 'all', strategy: 'afterInteractive' },
+                { id: 'adsense', name: 'Google AdSense', code: adsenseScript, enabled: true, injectOn: 'all', strategy: 'afterInteractive' }
+            ],
+            deferAll: true,
+            testMode: false,
+            lastUpdated: new Date().toISOString()
+        };
+
         // Insert default row if not exists
-        await pool.query(`
-            INSERT IGNORE INTO site_scripts (id, config) 
-            VALUES (1, '{"scripts": [], "deferAll": true, "testMode": false}')
-        `);
+        await pool.query(
+            "INSERT IGNORE INTO site_scripts (id, config) VALUES (1, ?)",
+            [JSON.stringify(defaultConfig)]
+        );
         console.log('Scripts DB initialized successfully');
 
         // Sync static HTML on boot for persistence
