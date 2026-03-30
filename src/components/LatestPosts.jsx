@@ -27,6 +27,7 @@ const LatestPosts = () => {
 
     useEffect(() => {
         if (!loading && posts.length > 0) {
+            gsap.registerPlugin(ScrollTrigger);
             const ctx = gsap.context(() => {
                 gsap.from(cardsRef.current, {
                     scrollTrigger: {

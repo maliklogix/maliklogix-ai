@@ -52,17 +52,20 @@ const Hero = () => {
         return () => ctx.revert();
     }, []);
 
+    const rectRef = useRef(null);
     const handleMagnetic = (e) => {
-        const el = e.currentTarget;
-        const rect = el.getBoundingClientRect();
+        if (!rectRef.current) {
+            rectRef.current = e.currentTarget.getBoundingClientRect();
+        }
+        const rect = rectRef.current;
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
-        gsap.to(el, { x: x * 0.3, y: y * 0.3, duration: 0.4, ease: 'power2.out' });
+        gsap.to(e.currentTarget, { x: x * 0.3, y: y * 0.3, duration: 0.4, ease: 'power2.out' });
     };
 
     const resetMagnetic = (e) => {
-        const el = e.currentTarget;
-        gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+        rectRef.current = null;
+        gsap.to(e.currentTarget, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
     };
 
     return (
@@ -94,7 +97,7 @@ const Hero = () => {
                             to="/contact"
                             onMouseMove={handleMagnetic}
                             onMouseLeave={resetMagnetic}
-                            className="magnetic-btn px-5 py-3 md:px-8 md:py-4 bg-accent text-white text-xs sm:text-sm md:text-base font-bold rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--background)] leading-tight"
+                            className="magnetic-btn px-5 py-3 md:px-8 md:py-4 bg-accent text-[var(--background)] text-xs sm:text-sm md:text-base font-bold rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20 flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--background)] leading-tight"
                         >
                             Get Your Free Automation Audit &rarr;
                         </Link>

@@ -306,7 +306,7 @@ const Navbar = () => {
                     <div className="flex items-center gap-6">
                         <ThemeToggle />
 
-                        <Link to="/contact" className="hidden sm:block px-6 py-2 bg-accent text-white font-bold rounded-full text-sm hover:scale-105 transition-transform shadow-lg shadow-accent/20">
+                        <Link to="/contact" className="hidden sm:block px-6 py-2 bg-accent text-[var(--background)] font-bold rounded-full text-sm hover:scale-105 transition-transform shadow-lg shadow-accent/20">
                             Free Audit &rarr;
                         </Link>
 
@@ -488,7 +488,7 @@ const Navbar = () => {
                             </Link>
                         );
                     })}
-                    <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="menu-link mt-8 px-10 py-4 bg-accent text-white font-bold rounded-full text-xl shadow-lg shadow-accent/20">
+                    <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="menu-link mt-8 px-10 py-4 bg-accent text-[var(--background)] font-bold rounded-full text-xl shadow-lg shadow-accent/20">
                         Free Audit &rarr;
                     </Link>
                 </div>

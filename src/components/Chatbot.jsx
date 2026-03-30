@@ -244,7 +244,7 @@ const Chatbot = () => {
                                         <button 
                                             onClick={() => handleEmailSubmit(email)}
                                             disabled={!email.includes('@')}
-                                            className="w-full py-3.5 bg-accent text-white font-bold rounded-2xl shadow-xl shadow-accent/20 disabled:opacity-50 transition-all text-sm"
+                                            className="w-full py-3.5 bg-accent text-[var(--background)] font-bold rounded-2xl shadow-xl shadow-accent/20 disabled:opacity-50 transition-all text-sm"
                                         >
                                             Start Chatting
                                         </button>
@@ -263,7 +263,7 @@ const Chatbot = () => {
                                                 {msg.role === 'user' ? 'You' : (msg.sender_name || 'MalikBot')}
                                             </span>
                                             <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
-                                                ? 'bg-accent text-white rounded-br-none shadow-lg shadow-accent/20'
+                                                ? 'bg-accent text-[var(--background)] rounded-br-none shadow-lg shadow-accent/20'
                                                 : 'bg-[var(--foreground)]/[0.05] text-[var(--foreground)] border border-[var(--border)] rounded-bl-none backdrop-blur-sm'
                                                 }`}>
                                                 {msg.content}
@@ -295,7 +295,7 @@ const Chatbot = () => {
                                 <button
                                     type="submit"
                                     disabled={!input.trim() || isLoading}
-                                    className="absolute right-2 top-2 w-10 h-10 bg-accent text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-accent/20"
+                                    className="absolute right-2 top-2 w-10 h-10 bg-accent text-[var(--background)] rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-accent/20"
                                 >
                                     <Send size={18} />
                                 </button>
@@ -324,8 +324,7 @@ const Chatbot = () => {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsOpen(!isOpen)}
                 aria-label="Toggle chatbot dialog"
-                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 relative z-10 ${isOpen ? 'bg-[var(--foreground)] text-[var(--background)] rotate-180' : 'bg-accent text-white'
-                    }`}
+                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 relative z-10 ${isOpen ? 'bg-[var(--foreground)] text-[var(--background)] rotate-180' : 'bg-accent text-[var(--background)]'}`}
             >
                 {isOpen ? <X size={24} /> : (
                     <motion.div

@@ -8,6 +8,7 @@ const Problem = () => {
     const cardsRef = useRef([]);
 
     useEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
         const ctx = gsap.context(() => {
             gsap.from(cardsRef.current, {
                 scrollTrigger: {

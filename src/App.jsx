@@ -83,8 +83,8 @@ const StackManager = lazy(() => import('./pages/dash/Stack/StackManager'));
 const YoutubeManager = lazy(() => import('./pages/dash/Youtube/YoutubeManager'));
 import { ToastProvider } from './components/dash/Toast';
 
-// Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger);
+// Register GSAP plugins (Plugin will be registered locally where needed for better code splitting)
+// gsap.registerPlugin(ScrollTrigger);
 
 import { useTheme } from './context/ThemeContext';
 

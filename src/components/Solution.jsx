@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import CircuitDiagram from './CircuitDiagram';
 
 
@@ -8,6 +9,7 @@ const Solution = () => {
     const diagramRef = useRef(null);
 
     useEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
         const ctx = gsap.context(() => {
             const layers = diagramRef.current.querySelectorAll('.layer');
             const lines = diagramRef.current.querySelectorAll('.connector');
@@ -79,7 +81,7 @@ const Solution = () => {
                         {[
                             { label: "1. Data & Triggers", color: "bg-[var(--card-bg)] border-[var(--border)] text-[var(--foreground)]" },
                             { label: "2. AI Logic Core", color: "bg-accent/20 border-accent/40 text-accent font-bold" },
-                            { label: "3. Automated Execution", color: "bg-accent text-white font-bold shadow-2xl shadow-accent/40" }
+                            { label: "3. Automated Execution", color: "bg-accent text-[var(--background)] font-bold shadow-2xl shadow-accent/40" }
                         ].map((layer, i) => (
                             <div key={i} className="flex items-center gap-8 group">
                                 <div className={`layer px-10 py-8 rounded-[2rem] border ${layer.color} min-w-[320px] text-center shadow-xl backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-2`}>

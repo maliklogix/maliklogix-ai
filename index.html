@@ -12,6 +12,14 @@
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap">
     </noscript>
+
+    <style>
+      :root { --accent: #06B6D4; }
+      .light { --background: #F8FAFC; --foreground: #0F172A; --secondary: #64748B; --card-bg: #FFFFFF; --border: #E2E8F0; color-scheme: light; }
+      .dark { --background: #080C10; --foreground: #F8FAFC; --secondary: #94A3B8; --card-bg: #111827; --border: #1E293B; color-scheme: dark; }
+      body { background-color: var(--background); color: var(--foreground); font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; }
+      #root { min-height: 100vh; }
+    </style>
   </head>
   <body class="bg-background text-foreground antialiased selection:bg-accent selection:text-background overflow-x-hidden">
     <div id="root"></div>
