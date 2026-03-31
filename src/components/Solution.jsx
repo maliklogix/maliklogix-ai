@@ -45,7 +45,7 @@ const Solution = () => {
 
     return (
         <section ref={sectionRef} className="py-16 px-8 lg:px-20 bg-[var(--background)] overflow-hidden transition-colors duration-500 relative">
-            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20 relative z-10">
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start gap-20 relative z-10">
                 <div className="lg:w-1/2">
                     <h2 className="text-sm font-mono text-accent uppercase tracking-[0.3em] mb-4">The Solution</h2>
                     <h3 className="text-4xl md:text-6xl mb-8 font-display font-bold text-[var(--foreground)] leading-tight">

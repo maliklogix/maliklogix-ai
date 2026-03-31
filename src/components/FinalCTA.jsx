@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const FinalCTA = () => {
     return (
         <section className="py-24 px-8 lg:px-20 bg-[var(--background)] transition-colors duration-500 overflow-hidden relative border-t border-[var(--border)]">
-            <div className="max-w-7xl mx-auto bg-accent rounded-[3.5rem] p-12 md:p-24 flex flex-col md:flex-row items-center justify-between gap-12 text-white relative z-10 shadow-3xl shadow-accent/40 overflow-hidden">
+            <div className="max-w-7xl mx-auto bg-accent rounded-[3.5rem] p-12 md:p-24 flex flex-col md:flex-row items-start justify-between gap-12 text-white relative z-10 shadow-3xl shadow-accent/40 overflow-hidden">
                 <div className="max-w-xl">
                     <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 leading-[1.1] tracking-tight">
                         Ready to <br /><span className="italic underline underline-offset-8 decoration-white/30">Automate</span> Your Business?
@@ -15,7 +15,7 @@ const FinalCTA = () => {
                     </p>
                 </div>
 
-                <div className="flex flex-col gap-6 w-full md:w-auto items-center">
+                <div className="flex flex-col gap-6 w-full md:w-auto items-start">
                     <Link to="/contact" className="px-5 py-3.5 md:px-10 md:py-6 bg-white text-accent font-bold rounded-[1.5rem] text-xs sm:text-sm md:text-lg flex items-center justify-center gap-2 md:gap-3 hover:scale-105 transition-all active:scale-95 shadow-2xl shadow-black/10 hover:shadow-white/20 w-full md:w-auto text-center leading-tight focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-accent">
                         Book a Free Automation Strategy Call
                         <ArrowUpRight size={20} className="shrink-0" />

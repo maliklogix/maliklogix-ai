@@ -4,7 +4,7 @@ import { Quote } from 'lucide-react';
 const Philosophy = () => {
     return (
         <section className="py-24 px-8 lg:px-20 bg-[var(--background)] transition-colors duration-500">
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-20 items-center">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-20 items-start">
                 <div className="md:w-1/2">
                     <div className="relative">
                         <Quote className="absolute -top-10 -left-10 w-20 h-20 text-accent/10" />

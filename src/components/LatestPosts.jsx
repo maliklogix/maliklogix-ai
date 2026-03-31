@@ -48,7 +48,7 @@ const LatestPosts = () => {
     return (
         <section ref={sectionRef} className="py-24 px-8 lg:px-20 bg-[var(--background)] transition-colors duration-500 border-t border-[var(--border)]">
             <div className="max-w-7xl mx-auto">
-                <div className="mb-16 flex flex-col md:flex-row justify-between items-end gap-8">
+                <div className="mb-16 flex flex-col md:flex-row justify-between items-start gap-8">
                     <div className="max-w-3xl">
                         <h2 className="text-sm font-mono text-accent uppercase tracking-[0.3em] mb-4">Inside our Studio</h2>
                         <h3 className="text-4xl md:text-6xl font-display font-bold text-[var(--foreground)] leading-tight mb-6">
@@ -123,7 +123,7 @@ const LatestPosts = () => {
                     </div>
                 )}
 
-                <div className="mt-12 md:hidden flex justify-center">
+                <div className="mt-12 md:hidden flex justify-start">
                     <Link to="/blog" className="flex items-center gap-2 text-accent font-bold">
                         Our Full Journal <ArrowRight size={20} />
                     </Link>

@@ -15,7 +15,7 @@ const FAQ = () => {
     return (
         <section className="py-16 px-8 lg:px-20 bg-[var(--background)] transition-colors duration-500 border-t border-[var(--border)]">
             <div className="max-w-4xl mx-auto">
-                <div className="text-center mb-20">
+                <div className="text-left mb-20">
                     <h2 className="text-sm font-mono text-accent uppercase tracking-[0.3em] mb-4">Intelligence FAQ</h2>
                     <h3 className="text-4xl md:text-5xl font-display text-[var(--foreground)] font-bold">Common Inquiries</h3>
                 </div>

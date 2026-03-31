@@ -36,7 +36,7 @@ const CaseStudies = () => {
     return (
         <section className="py-16 px-8 lg:px-20 bg-[var(--background)] transition-colors duration-500">
             <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div className="flex flex-col md:flex-row justify-between items-start mb-16 gap-6">
                     <div className="max-w-2xl">
                         <h2 className="text-sm font-mono text-accent uppercase tracking-[0.3em] mb-4">Case Studies</h2>
                         <h3 className="text-4xl md:text-6xl font-display font-bold text-[var(--foreground)]">Proof in the <span className="text-accent underline decoration-accent/20 underline-offset-8">Data</span></h3>

@@ -13,7 +13,7 @@ const Comparison = () => {
     return (
         <section className="py-16 px-8 lg:px-20 bg-[var(--background)] transition-colors duration-500">
             <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16">
+                <div className="text-left mb-16">
                     <h2 className="text-sm font-mono text-accent uppercase tracking-[0.3em] mb-4">The Comparison</h2>
                     <h3 className="text-4xl md:text-5xl font-display font-bold text-[var(--foreground)]">Traditional Agency vs. <br /><span className="text-accent underline decoration-accent/10 underline-offset-4">MalikLogix</span></h3>
                 </div>
