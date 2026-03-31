@@ -14,11 +14,15 @@ const SettingsManager = () => {
         maintenanceMode: false,
         enableNotifications: true,
         defaultLanguage: 'en',
-        databaseBackup: 'daily'
+        databaseBackup: 'daily',
+        defaultTheme: localStorage.getItem('system_default_theme') || 'dark'
     });
 
     const handleSave = async () => {
         setSaving(true);
+        // Persist to localStorage for site-wide default
+        localStorage.setItem('system_default_theme', settings.defaultTheme);
+        
         // Simulate API call
         setTimeout(() => {
             setSaving(false);
@@ -95,6 +99,37 @@ const SettingsManager = () => {
                                         onChange={(e) => setSettings(s => ({...s, adminEmail: e.target.value}))}
                                         className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none"
                                     />
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Appearance Settings */}
+                        <section className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+                            <div className="flex items-center gap-3 border-b border-gray-50 pb-4">
+                                <Shield className="text-accent" size={20} />
+                                <h3 className="font-display font-bold text-lg">Appearance & Theme</h3>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <div>
+                                        <p className="text-sm font-bold text-gray-900 capitalize">Default Site Theme</p>
+                                        <p className="text-xs text-gray-500">Theme shown to new users by default</p>
+                                    </div>
+                                    <div className="flex bg-white p-1 rounded-xl border border-gray-100 shadow-sm">
+                                        {['light', 'dark'].map((t) => (
+                                            <button
+                                                key={t}
+                                                onClick={() => setSettings(s => ({...s, defaultTheme: t}))}
+                                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                                    settings.defaultTheme === t 
+                                                    ? 'bg-accent text-white shadow-md shadow-accent/20' 
+                                                    : 'text-gray-400 hover:text-gray-600'
+                                                }`}
+                                            >
+                                                {t.toUpperCase()}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </section>
