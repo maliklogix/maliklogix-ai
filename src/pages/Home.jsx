@@ -16,7 +16,6 @@ const FinalCTA = React.lazy(() => import('../components/FinalCTA'));
 
 /**
  * Custom wrapper that only renders children once the container is near the viewport.
- * This prevents the browser from downloading lazy-load chunks until scrolling begins.
  */
 const DeferSection = ({ children, fallback }) => {
     const [isVisible, setIsVisible] = useState(false);
@@ -30,7 +29,7 @@ const DeferSection = ({ children, fallback }) => {
                     observer.disconnect();
                 }
             },
-            { rootMargin: '300px' } // Pre-load 300px before scroll
+            { rootMargin: '300px' }
         );
 
         if (ref.current) observer.observe(ref.current);
@@ -53,14 +52,21 @@ const SectionSkeleton = React.memo(({ h = '400px' }) => (
 ));
 
 const Home = () => {
+    // Predictive Prefetching: Pre-load Services and About chunks for instant navigation
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            import('./Services');
+            import('./About');
+        }, 4000); // 4 Seconds of idle time
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <div className="flex flex-col gap-0">
-            {/* Critical Path: Loads instantly on initial visit */}
             <Hero />
             <Stats />
             <Solution />
             
-            {/* Deferred Content: Only fetching when user starts scrolling */}
             <DeferSection fallback={<SectionSkeleton h="500px" />}>
                 <Suspense fallback={<SectionSkeleton h="500px" />}>
                     <Features />

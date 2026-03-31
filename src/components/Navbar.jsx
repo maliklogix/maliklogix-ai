@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import { gsap } from 'gsap';
 import { Menu, X, ChevronDown, ChevronUp, ChevronRight, Tag, Handshake, Users, FileText, Link2, Video, Smartphone, Monitor, Mail, Mic, Instagram, Github, Twitter, MessageCircle, Info, BookOpen, UserCheck, ShieldCheck, HelpCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -14,6 +14,7 @@ const Navbar = () => {
     const [isMobileStackOpen, setIsMobileStackOpen] = useState(false);
     const navRef = useRef(null);
     const menuRef = useRef(null);
+    const ticking = useRef(false);
     const location = useLocation();
 
     // Close mobile sub-menus and menu on route change
@@ -25,15 +26,24 @@ const Navbar = () => {
     }, [location.pathname]);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50);
+        const updateScroll = () => {
+            const scrollPos = window.scrollY > 50;
+            setIsScrolled(scrollPos);
+            ticking.current = false;
         };
-        window.addEventListener('scroll', handleScroll);
+
+        const handleScroll = () => {
+            if (!ticking.current) {
+                window.requestAnimationFrame(updateScroll);
+                ticking.current = true;
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
 
         const handleEscape = (e) => {
             if (e.key === 'Escape') {
                 setIsMenuOpen(false);
-                // Desktop mega menu uses CSS hover, but if we had state it would go here
             }
         };
         window.addEventListener('keydown', handleEscape);
@@ -82,6 +92,7 @@ const Navbar = () => {
                 ref={navRef}
                 className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 ease-out flex justify-center items-center py-6 px-8 lg:px-20 ${isScrolled ? 'pt-4' : 'pt-8'
                     }`}
+                style={{ willChange: 'padding, scale, background-color' }}
             >
                 <div
                     className={`relative flex items-center justify-between w-full max-w-7xl transition-all duration-500 ease-out border ${isScrolled
@@ -503,4 +514,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default memo(Navbar);
