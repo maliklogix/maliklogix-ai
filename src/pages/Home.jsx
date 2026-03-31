@@ -1,19 +1,17 @@
-import React, { Suspense, useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Priority Imports (Immediate loads)
+// Priority Imports (Immediate loads for layout stability)
 import Hero from '../components/Hero';
 import Stats from '../components/Stats';
 import Solution from '../components/Solution';
-
-// Deferred Sections (Lazy loaded only when near viewport)
-const Features = React.lazy(() => import('../components/Features'));
-const LatestPosts = React.lazy(() => import('../components/LatestPosts'));
-const CaseStudies = React.lazy(() => import('../components/CaseStudies'));
-const Comparison = React.lazy(() => import('../components/Comparison'));
-const Philosophy = React.lazy(() => import('../components/Philosophy'));
-const FAQ = React.lazy(() => import('../components/FAQ'));
-const FinalCTA = React.lazy(() => import('../components/FinalCTA'));
+import Features from '../components/Features';
+import LatestPosts from '../components/LatestPosts';
+import CaseStudies from '../components/CaseStudies';
+import Comparison from '../components/Comparison';
+import Philosophy from '../components/Philosophy';
+import FAQ from '../components/FAQ';
+import FinalCTA from '../components/FinalCTA';
 
 const Home = () => {
     // Centralized debounced ScrollTrigger refresh to mitigate forced reflows
