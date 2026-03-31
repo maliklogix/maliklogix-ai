@@ -8,8 +8,14 @@ const AnimationCircle = () => {
                 {`
                     @keyframes spin-slow { 100% { transform: rotate(360deg); } }
                     @keyframes spin-slow-reverse { 100% { transform: rotate(-360deg); } }
-                    .spin-container { animation: spin-slow 20s linear infinite; }
-                    .spin-icon { animation: spin-slow-reverse 20s linear infinite; }
+                    .spin-container { 
+                        animation: spin-slow 20s linear infinite; 
+                        will-change: transform;
+                    }
+                    .spin-icon { 
+                        animation: spin-slow-reverse 20s linear infinite; 
+                        will-change: transform;
+                    }
                 `}
             </style>
 
@@ -64,4 +70,4 @@ const AnimationCircle = () => {
     );
 };
 
-export default AnimationCircle;
+export default React.memo(AnimationCircle);
