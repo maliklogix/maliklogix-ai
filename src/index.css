@@ -37,17 +37,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* GPU Optimized Sections */
-  section {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 600px; /* Better default for layout stability */
-  }
-
-  /* Specific heights for critical sections to minimize CLS */
-  .hero-section { contain-intrinsic-size: auto 90vh; }
-  .stats-section { contain-intrinsic-size: auto 200px; }
-  .solution-section { contain-intrinsic-size: auto 600px; }
-
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight leading-tight;
   }
