@@ -1,12 +1,9 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, MapPin, Github, Twitter, Instagram, Youtube, MessageCircle } from 'lucide-react';
 import Logo from './Logo';
 
 const Footer = () => {
-    const { theme } = useTheme();
-
     return (
         <footer className="py-20 px-8 lg:px-20 bg-[var(--background)] border-t border-[var(--border)] transition-colors duration-500 relative z-10">
             <div className="max-w-7xl mx-auto">
@@ -23,7 +20,13 @@ const Footer = () => {
                             Built by Malik | Shopify · Amazon · RPA · Data
                         </p>
                         
-                        <a href="https://maps.google.com/?q=Lahore,Pakistan" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--card-bg)] text-[var(--secondary)] hover:text-accent hover:border-accent/40 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all font-mono text-xs uppercase tracking-widest group leading-none">
+                        {/* Location link — explicit dimensions on all icons to prevent reflow */}
+                        <a
+                            href="https://maps.google.com/?q=Lahore,Pakistan"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--card-bg)] text-[var(--secondary)] hover:text-accent hover:border-accent/40 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all font-mono text-xs uppercase tracking-widest group leading-none"
+                        >
                             <MapPin size={14} width={14} height={14} className="text-accent shrink-0" />
                             <span className="inline-block pt-0.5">Lahore, Pakistan</span>
                             <ArrowUpRight size={14} width={14} height={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
@@ -56,7 +59,7 @@ const Footer = () => {
                         <h2 className="text-sm font-mono text-accent uppercase tracking-widest mb-6">Hub</h2>
                         <ul className="space-y-3 text-[var(--secondary)] font-body text-sm">
                             <li><Link to="/contact" className="hover:text-accent transition-colors block">Contact Us</Link></li>
-                            <li><Link to="/stack/coupons" className="hover:text-accent transition-colors block">Stack & Deals</Link></li>
+                            <li><Link to="/stack/coupons" className="hover:text-accent transition-colors block">Stack &amp; Deals</Link></li>
                             <li><Link to="/stack/media-kit" className="hover:text-accent transition-colors block">Media Kit</Link></li>
                             <li><Link to="/docs" className="hover:text-accent transition-colors block">System Docs</Link></li>
                         </ul>
@@ -75,19 +78,19 @@ const Footer = () => {
                     
                     <div className="flex gap-4 items-center">
                         <Link to="/github" className="p-2.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--secondary)] rounded-full hover:border-accent hover:text-accent hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all group" aria-label="GitHub">
-                            <Github size={16} className="group-hover:scale-110 transition-transform" />
+                            <Github size={16} width={16} height={16} className="group-hover:scale-110 transition-transform" />
                         </Link>
                         <Link to="/x" className="p-2.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--secondary)] rounded-full hover:border-[var(--foreground)] hover:text-[var(--foreground)] transition-all group" aria-label="X (Twitter)">
-                            <Twitter size={16} className="group-hover:scale-110 transition-transform" />
+                            <Twitter size={16} width={16} height={16} className="group-hover:scale-110 transition-transform" />
                         </Link>
                         <Link to="/instagram" className="p-2.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--secondary)] rounded-full hover:border-pink-500 hover:text-pink-500 hover:shadow-[0_0_15px_rgba(236,72,153,0.2)] transition-all group" aria-label="Instagram">
-                            <Instagram size={16} className="group-hover:scale-110 transition-transform" />
+                            <Instagram size={16} width={16} height={16} className="group-hover:scale-110 transition-transform" />
                         </Link>
                         <Link to="/youtube" className="p-2.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--secondary)] rounded-full hover:border-red-500 hover:text-red-500 hover:shadow-[0_0_15px_rgba(239,68,68,0.2)] transition-all group" aria-label="YouTube">
-                            <Youtube size={16} className="group-hover:scale-110 transition-transform" />
+                            <Youtube size={16} width={16} height={16} className="group-hover:scale-110 transition-transform" />
                         </Link>
                         <Link to="/whatsapp" className="p-2.5 bg-[var(--card-bg)] border border-[var(--border)] text-[var(--secondary)] rounded-full hover:border-emerald-500 hover:text-emerald-500 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all group" aria-label="WhatsApp">
-                            <MessageCircle size={16} className="group-hover:scale-110 transition-transform" />
+                            <MessageCircle size={16} width={16} height={16} className="group-hover:scale-110 transition-transform" />
                         </Link>
                     </div>
                 </div>

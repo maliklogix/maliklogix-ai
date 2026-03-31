@@ -27,7 +27,7 @@ const TopBar = ({ onToggleSidebar, isSidebarOpen }) => {
     };
 
     return (
-        <header className="h-[72px] bg-white border-b border-gray-100 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-50">
+        <header className="h-[72px] bg-[var(--card-bg)] border-b border-[var(--border)] flex items-center justify-between px-4 sm:px-8 sticky top-0 z-50">
             <div className="flex items-center gap-4">
                 <button 
                     onClick={onToggleSidebar}
@@ -36,7 +36,7 @@ const TopBar = ({ onToggleSidebar, isSidebarOpen }) => {
                 >
                     <Menu size={20} />
                 </button>
-                <h1 className="text-lg sm:text-xl font-display font-bold text-gray-900 truncate max-w-[150px] sm:max-w-none">
+                <h1 className="text-lg sm:text-xl font-display font-bold text-[var(--foreground)] truncate max-w-[150px] sm:max-w-none">
                     {getTitle()}
                 </h1>
             </div>
@@ -48,12 +48,12 @@ const TopBar = ({ onToggleSidebar, isSidebarOpen }) => {
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
                 </button>
 
-                <div className="h-8 w-px bg-gray-100 mx-1 hidden xs:block"></div>
+                <div className="h-8 w-px bg-[var(--border)] mx-1 hidden xs:block"></div>
 
                 {/* User Info */}
                 <div className="flex items-center gap-3 sm:gap-4">
                     <div className="flex flex-col items-end hidden md:flex">
-                        <span className="text-xs font-bold text-gray-900 leading-none">Malik Farooq</span>
+                        <span className="text-xs font-bold text-[var(--foreground)] leading-none">Malik Farooq</span>
                         <span className="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">Super Admin</span>
                     </div>
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-accent/10 border border-accent/20 rounded-full flex items-center justify-center text-accent font-bold text-sm sm:text-base">

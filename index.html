@@ -8,7 +8,9 @@
     <meta name="description" content="MalikLogix is a premium AI digital marketing and automation agency specializing in Shopify, Amazon, RPA, and data-driven growth strategies." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <!-- Non-render-blocking font load: move off critical path -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@500&display=swap"></noscript>
 
     <style>
       :root { --accent: #06B6D4; --background: #080C10; --foreground: #F8FAFC; }

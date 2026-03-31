@@ -10,7 +10,7 @@ const DashLayout = () => {
     const closeSidebar = () => setIsSidebarOpen(false);
 
     return (
-        <div className="flex min-h-screen bg-gray-50/50 relative">
+        <div className="flex min-h-screen bg-[var(--background)] relative">
             {/* Mobile Backdrop */}
             {isSidebarOpen && (
                 <div 
