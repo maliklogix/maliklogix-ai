@@ -41,7 +41,15 @@ const LatestPosts = () => {
                 });
             }, sectionRef);
 
-            return () => ctx.revert();
+            // Debounced refresh to avoid layout thrashing
+            const timer = setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 200);
+
+            return () => {
+                ctx.revert();
+                clearTimeout(timer);
+            };
         }
     }, [loading, posts]);
 

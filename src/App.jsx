@@ -56,28 +56,7 @@ const ExtensionsPage = lazy(() => import('./pages/tools/openclaw/extensions'));
 const SubmitPage = lazy(() => import('./pages/tools/openclaw/submit'));
 
 // Dashboard
-const DashLogin = lazy(() => import('./pages/dash/DashLogin'));
-const AuthGuard = lazy(() => import('./components/dash/AuthGuard'));
-const DashLayout = lazy(() => import('./components/dash/DashLayout'));
-const DashOverview = lazy(() => import('./pages/dash/DashOverview'));
-const BlogList = lazy(() => import('./pages/dash/Blog/BlogList'));
-const BlogEditor = lazy(() => import('./pages/dash/Blog/BlogEditor'));
-const ServiceList = lazy(() => import('./pages/dash/Services/ServiceList'));
-const ServiceEditor = lazy(() => import('./pages/dash/Services/ServiceEditor'));
-const LeadList = lazy(() => import('./pages/dash/Leads/LeadList'));
-const LeadDetail = lazy(() => import('./pages/dash/Leads/LeadDetail'));
-const NewsletterList = lazy(() => import('./pages/dash/Newsletter/NewsletterList'));
-const CampaignComposer = lazy(() => import('./pages/dash/Newsletter/CampaignComposer'));
-const SeoManager = lazy(() => import('./pages/dash/SeoManager'));
-const SettingsManager = lazy(() => import('./pages/dash/SettingsManager'));
-const MediaManager = lazy(() => import('./pages/dash/Media/MediaManager'));
-const LiveAgent = lazy(() => import('./pages/dash/LiveAgent/LiveAgent'));
-const ToolsManager = lazy(() => import('./pages/dash/Tools/ToolsManager'));
-const ToolEditor = lazy(() => import('./pages/dash/Tools/ToolEditor'));
-const SocialMedia = lazy(() => import('./pages/dash/SocialMedia/SocialMedia'));
-const StackManager = lazy(() => import('./pages/dash/Stack/StackManager'));
-const YoutubeManager = lazy(() => import('./pages/dash/Youtube/YoutubeManager'));
-const ToastProvider = lazy(() => import('./components/dash/Toast').then(m => ({ default: m.ToastProvider })));
+const DashRouter = lazy(() => import('./DashRouter'));
 
 // Register GSAP plugins (Plugin will be registered locally where needed for better code splitting)
 // gsap.registerPlugin(ScrollTrigger);
@@ -186,10 +165,9 @@ const App = () => {
             {!isDashboard && <Navbar />}
 
             <main className="flex-grow relative z-10">
-                <ToastProvider>
-                    <Suspense fallback={<Loader />}>
-                        <Routes>
-                            <Route path="/" element={<Home />} />
+                <Suspense fallback={null}>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/services" element={<Services />} />
                         <Route path="/services/ai-campaign-management" element={<AiCampaignManagementPage />} />
@@ -231,38 +209,12 @@ const App = () => {
                         <Route path="/legal" element={<Legal />} />
                         <Route path="/docs" element={<Docs />} />
                         <Route path="/philosophy" element={<Philosophy />} />
+                        
+                        <Route path="/dash/*" element={<DashRouter />} />
+                        
                         <Route path="*" element={<NotFound />} />
-
-
-
-                        {/* Dashboard Routes */}
-                        <Route path="/dash/login" element={<DashLogin />} />
-                        <Route element={<AuthGuard />}>
-                            <Route element={<DashLayout />}>
-                                <Route path="/dash" element={<DashOverview />} />
-                                <Route path="/dash/blog" element={<BlogList />} />
-                                <Route path="/dash/blog/new" element={<BlogEditor />} />
-                                <Route path="/dash/blog/:id/edit" element={<BlogEditor />} />
-                                <Route path="/dash/services" element={<ServiceList />} />
-                                <Route path="/dash/services/:slug/edit" element={<ServiceEditor />} />
-                                <Route path="/dash/leads" element={<LeadList />} />
-                                <Route path="/dash/leads/:id" element={<LeadDetail />} />
-                                <Route path="/dash/newsletter" element={<NewsletterList />} />
-                                <Route path="/dash/newsletter/new" element={<CampaignComposer />} />
-                                <Route path="/dash/media" element={<MediaManager />} />
-                                <Route path="/dash/live-agent" element={<LiveAgent />} />
-                                <Route path="/dash/seo" element={<SeoManager />} />
-                                <Route path="/dash/settings" element={<SettingsManager />} />
-                                <Route path="/dash/social-media" element={<SocialMedia />} />
-                                <Route path="/dash/stack" element={<StackManager />} />
-                                <Route path="/dash/youtube" element={<YoutubeManager />} />
-                                <Route path="/dash/tools" element={<ToolsManager />} />
-                                <Route path="/dash/tools/:id/edit" element={<ToolEditor />} />
-                            </Route>
-                        </Route>
                     </Routes>
-                    </Suspense>
-                </ToastProvider>
+                </Suspense>
             </main>
 
             {!isDashboard && (

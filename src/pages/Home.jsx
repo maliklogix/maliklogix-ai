@@ -1,4 +1,5 @@
-import React, { Suspense, useState, useEffect, useRef } from 'react';
+import React, { Suspense, useState, useEffect, useRef, useCallback } from 'react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // Priority Imports (Immediate loads)
 import Hero from '../components/Hero';
@@ -17,7 +18,7 @@ const FinalCTA = React.lazy(() => import('../components/FinalCTA'));
 /**
  * Custom wrapper that only renders children once the container is near the viewport.
  */
-const DeferSection = ({ children, fallback }) => {
+const DeferSection = ({ children, h = '500px' }) => {
     const [isVisible, setIsVisible] = useState(false);
     const ref = useRef(null);
 
@@ -37,21 +38,21 @@ const DeferSection = ({ children, fallback }) => {
     }, []);
 
     return (
-        <div ref={ref} className="w-full min-h-[100px]">
-            {isVisible ? children : fallback}
+        <div ref={ref} className="w-full" style={{ minHeight: isVisible ? 'auto' : h }}>
+            {isVisible ? children : null}
         </div>
     );
 };
 
-const SectionSkeleton = React.memo(({ h = '400px' }) => (
-    <div className="px-8 lg:px-20 max-w-7xl mx-auto w-full py-16">
-        <div className="w-full bg-[var(--card-bg)] animate-pulse rounded-3xl" style={{ minHeight: h }}>
-            <div className="w-full h-full opacity-10 bg-gradient-to-tr from-accent/20 to-transparent" />
-        </div>
-    </div>
-));
-
 const Home = () => {
+    // Centralized debounced ScrollTrigger refresh to mitigate forced reflows
+    const refreshScroll = useCallback(() => {
+        const timer = setTimeout(() => {
+            ScrollTrigger.refresh();
+        }, 100);
+        return () => clearTimeout(timer);
+    }, []);
+
     // Predictive Prefetching: Pre-load Services and About chunks for instant navigation
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -67,46 +68,32 @@ const Home = () => {
             <Stats />
             <Solution />
             
-            <DeferSection fallback={<SectionSkeleton h="500px" />}>
-                <Suspense fallback={<SectionSkeleton h="500px" />}>
-                    <Features />
-                </Suspense>
+            <DeferSection h="550px">
+                <Features />
             </DeferSection>
             
-            <DeferSection fallback={<SectionSkeleton h="450px" />}>
-                <Suspense fallback={<SectionSkeleton h="450px" />}>
-                    <CaseStudies />
-                </Suspense>
+            <DeferSection h="600px">
+                <CaseStudies />
             </DeferSection>
 
-            <DeferSection fallback={<SectionSkeleton h="400px" />}>
-                <Suspense fallback={<SectionSkeleton h="400px" />}>
-                    <Comparison />
-                </Suspense>
+            <DeferSection h="500px">
+                <Comparison />
             </DeferSection>
 
-            <DeferSection fallback={<SectionSkeleton h="550px" />}>
-                <Suspense fallback={<SectionSkeleton h="550px" />}>
-                    <Philosophy />
-                </Suspense>
+            <DeferSection h="650px">
+                <Philosophy />
             </DeferSection>
 
-            <DeferSection fallback={<SectionSkeleton h="500px" />}>
-                <Suspense fallback={<SectionSkeleton h="500px" />}>
-                    <LatestPosts />
-                </Suspense>
+            <DeferSection h="600px">
+                <LatestPosts />
             </DeferSection>
 
-            <DeferSection fallback={<SectionSkeleton h="400px" />}>
-                <Suspense fallback={<SectionSkeleton h="400px" />}>
-                    <FAQ />
-                </Suspense>
+            <DeferSection h="500px">
+                <FAQ />
             </DeferSection>
 
-            <DeferSection fallback={<SectionSkeleton h="350px" />}>
-                <Suspense fallback={<SectionSkeleton h="350px" />}>
-                    <FinalCTA />
-                </Suspense>
+            <DeferSection h="450px">
+                <FinalCTA />
             </DeferSection>
 
         </div>

@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect, useCallback } from 'react';
 // Three.js background disabled for performance
 import { gsap } from 'gsap';
 import { useTheme } from '../context/ThemeContext';
@@ -54,19 +54,25 @@ const Hero = () => {
 
     const xTo = useRef(null);
     const yTo = useRef(null);
-    const boundsRef = useRef(null);
+    const boundsCache = useRef(new Map());
 
     const initMagnetic = (e) => {
-        boundsRef.current = e.currentTarget.getBoundingClientRect();
+        const target = e.currentTarget;
+        if (!boundsCache.current.has(target)) {
+            boundsCache.current.set(target, target.getBoundingClientRect());
+        }
+        
         if (!xTo.current || !yTo.current) {
-            xTo.current = gsap.quickTo(e.currentTarget, "x", { duration: 0.4, ease: "power2.out" });
-            yTo.current = gsap.quickTo(e.currentTarget, "y", { duration: 0.4, ease: "power2.out" });
+            xTo.current = gsap.quickTo(target, "x", { duration: 0.4, ease: "power2.out" });
+            yTo.current = gsap.quickTo(target, "y", { duration: 0.4, ease: "power2.out" });
         }
     };
 
     const handleMagnetic = (e) => {
-        if (!boundsRef.current) return;
-        const rect = boundsRef.current;
+        const target = e.currentTarget;
+        const rect = boundsCache.current.get(target);
+        if (!rect) return;
+        
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
         xTo.current(x * 0.3);
@@ -74,13 +80,19 @@ const Hero = () => {
     };
 
     const resetMagnetic = (e) => {
-        boundsRef.current = null;
         if (xTo.current && yTo.current) {
             xTo.current(0);
             yTo.current(0);
         }
         gsap.to(e.currentTarget, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
     };
+
+    // Clear cache on resize to ensure accuracy
+    useEffect(() => {
+        const handleResize = () => boundsCache.current.clear();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     return (
         <section ref={containerRef} className="relative min-h-[90vh] w-full px-8 lg:px-20 overflow-hidden bg-[var(--background)] pt-32 pb-20 transition-colors duration-500 flex items-center">

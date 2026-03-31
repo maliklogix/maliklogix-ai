@@ -23,10 +23,10 @@ const Footer = () => {
                             Built by Malik | Shopify · Amazon · RPA · Data
                         </p>
                         
-                        <a href="https://maps.google.com/?q=Lahore,Pakistan" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--card-bg)] text-[var(--secondary)] hover:text-accent hover:border-accent/40 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all font-mono text-xs uppercase tracking-widest group">
-                            <MapPin size={14} className="text-accent" />
-                            Lahore, Pakistan
-                            <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        <a href="https://maps.google.com/?q=Lahore,Pakistan" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--card-bg)] text-[var(--secondary)] hover:text-accent hover:border-accent/40 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all font-mono text-xs uppercase tracking-widest group leading-none">
+                            <MapPin size={14} width={14} height={14} className="text-accent shrink-0" />
+                            <span className="inline-block pt-0.5">Lahore, Pakistan</span>
+                            <ArrowUpRight size={14} width={14} height={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
                         </a>
                     </div>
 
