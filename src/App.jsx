@@ -158,13 +158,13 @@ const App = () => {
     }, [location]);
 
     return (
-        <div ref={containerRef} className={`${theme} relative min-h-screen transition-colors duration-500 bg-[var(--background)] flex flex-col text-[var(--foreground)]`}>
+        <div ref={containerRef} className={`${!isDashboard ? theme : 'light'} relative min-h-screen transition-colors duration-500 bg-[var(--background)] flex flex-col text-[var(--foreground)]`}>
             <ScrollToTop />
             {/* <div className="noise-overlay" /> */}
 
             {!isDashboard && <Navbar />}
 
-            <main className="flex-grow relative z-10">
+            <main className="flex-grow min-h-screen relative z-10">
                 <Suspense fallback={null}>
                     <Routes>
                         <Route path="/" element={<Home />} />
