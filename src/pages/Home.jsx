@@ -13,8 +13,10 @@ const FAQ = React.lazy(() => import('../components/FAQ'));
 const FinalCTA = React.lazy(() => import('../components/FinalCTA'));
 
 const SectionSkeleton = ({ h = '400px' }) => (
-    <div className="w-full bg-[var(--card-bg)] animate-pulse rounded-3xl mb-20" style={{ minHeight: h }}>
-        <div className="w-full h-full opacity-10 bg-gradient-to-tr from-accent/20 to-transparent" />
+    <div className="px-8 lg:px-20 max-w-7xl mx-auto w-full py-16">
+        <div className="w-full bg-[var(--card-bg)] animate-pulse rounded-3xl" style={{ minHeight: h }}>
+            <div className="w-full h-full opacity-10 bg-gradient-to-tr from-accent/20 to-transparent" />
+        </div>
     </div>
 );
 
@@ -24,39 +26,38 @@ const Home = () => {
             <Hero />
             <Stats />
             
-            <div className="px-8 lg:px-20 max-w-7xl mx-auto w-full">
-                <Suspense fallback={<SectionSkeleton h="600px" />}>
-                    <Solution />
-                </Suspense>
-                
-                <Suspense fallback={<SectionSkeleton h="500px" />}>
-                    <Features />
-                </Suspense>
-                
-                <Suspense fallback={<SectionSkeleton h="450px" />}>
-                    <CaseStudies />
-                </Suspense>
+            <Suspense fallback={<SectionSkeleton h="600px" />}>
+                <Solution />
+            </Suspense>
+            
+            <Suspense fallback={<SectionSkeleton h="500px" />}>
+                <Features />
+            </Suspense>
+            
+            <Suspense fallback={<SectionSkeleton h="450px" />}>
+                <CaseStudies />
+            </Suspense>
 
-                <Suspense fallback={<SectionSkeleton h="400px" />}>
-                    <Comparison />
-                </Suspense>
+            <Suspense fallback={<SectionSkeleton h="400px" />}>
+                <Comparison />
+            </Suspense>
 
-                <Suspense fallback={<SectionSkeleton h="550px" />}>
-                    <Philosophy />
-                </Suspense>
+            <Suspense fallback={<SectionSkeleton h="550px" />}>
+                <Philosophy />
+            </Suspense>
 
-                <Suspense fallback={<SectionSkeleton h="500px" />}>
-                    <LatestPosts />
-                </Suspense>
+            <Suspense fallback={<SectionSkeleton h="500px" />}>
+                <LatestPosts />
+            </Suspense>
 
-                <Suspense fallback={<SectionSkeleton h="400px" />}>
-                    <FAQ />
-                </Suspense>
+            <Suspense fallback={<SectionSkeleton h="400px" />}>
+                <FAQ />
+            </Suspense>
 
-                <Suspense fallback={<SectionSkeleton h="350px" />}>
-                    <FinalCTA />
-                </Suspense>
-            </div>
+            <Suspense fallback={<SectionSkeleton h="350px" />}>
+                <FinalCTA />
+            </Suspense>
+
         </div>
     );
 };
